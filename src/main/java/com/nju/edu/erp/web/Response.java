@@ -21,6 +21,8 @@ public class Response {
         return new Response("00000", "Success", result);
     }
 
+    public static Response buildSuccess() {return new Response("00000", "Success", null);};
+
     public static Response buildFailed(String code, RuntimeException e) {
         return new Response(code, e.getLocalizedMessage(), null);
     }
