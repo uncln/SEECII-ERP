@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nju.edu.erp.dao.WarehouseOutputDao">
+    <insert id="save" parameterType="WarehouseOutputPO">
+        insert into warehouse_output (id, operator, update_time)
+        values (#{id},#{operator},#{updateTime})
+    </insert>
 
+    <select id="getLatest" resultMap="WarehouseOutputPO">
+        select * from warehouse_output order by id desc limit 0,1 ;
+    </select>
+
+    <resultMap id="WarehouseOutputPO" type="com.nju.edu.erp.model.po.WarehouseOutputPO">
+        <id column="id" property="id"></id>
+        <result column="operator" property="operator"></result>
+        <result column="update_time" property="updateTime"></result>
+    </resultMap>
 </mapper>
