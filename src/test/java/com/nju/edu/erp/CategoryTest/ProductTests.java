@@ -17,7 +17,12 @@ public class ProductTests {
     void updateTest() {
         ProductPO productPO = new ProductPO();
         productPO.setId("0000000000500000");
-        productPO.setName("华硕电脑");
+        productPO.setName("intel电脑");
         productDao.updateById(productPO);
+    }
+
+    @Test
+    void findByIdTest() {
+        System.out.println(productDao.findById("0000000000500000"));
     }
 }
