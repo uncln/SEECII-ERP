@@ -22,7 +22,7 @@ public interface WarehouseService {
 
     /**
      * 通过商品id、批次和数量来从库存中取物品
-     * @param params
+     * @param params 商品id、批次和数量
      * @return 不同批次的相同物品列表
      */
     List<WarehouseOneProductInfoVO> getWareProductInfo(GetWareProductInfoParamsVO params);
