@@ -20,7 +20,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryVO createExam(Integer parentId, String name) {
+    public CategoryVO createCategory(Integer parentId, String name) {
+
+        // 获取父节点，判断是否能够进行插入
+        // CategoryPO fatherPO = categoryDao.findByCategoryId(parentId);
+
+        //if (fatherPO.getItemCount() > 0 )
 
         CategoryPO categoryPO = new CategoryPO(null, name, parentId, true, 0, 1);
 
@@ -30,4 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         return categoryVO;
     }
+
+
+
 }

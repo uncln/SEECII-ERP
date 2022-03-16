@@ -11,4 +11,5 @@ public interface CategoryDao {
 
     int createCategory(CategoryPO categoryPO);
 
+    // CategoryPO findByCategoryId(Integer categoryId);
 }

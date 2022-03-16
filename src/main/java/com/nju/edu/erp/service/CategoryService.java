@@ -10,5 +10,5 @@ public interface CategoryService {
      * @param name 分类名
      * @return 邀请码，题目等内容
      */
-    CategoryVO createExam(Integer parentId, String name);
+    CategoryVO createCategory(Integer parentId, String name);
 }

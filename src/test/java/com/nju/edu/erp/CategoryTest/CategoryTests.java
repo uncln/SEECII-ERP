@@ -13,7 +13,7 @@ public class CategoryTests {
 
     @Test
     void createCategoryTest() {
-        categoryService.createExam(4, "笔记本");
+        categoryService.createCategory(4, "笔记本");
 
     }
 }
