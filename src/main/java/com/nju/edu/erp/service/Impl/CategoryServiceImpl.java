@@ -25,14 +25,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryVO createCategory(Integer parentId, String name) {
+        // parentId 为0则无法插入
+        if (parentId <= 0) {
+            throw new MyServiceException("A0000", "无效父类");
+        }
         // 获取父节点，判断是否能够进行插入
         CategoryPO fatherPO = categoryDao.findByCategoryId(parentId);
         // 当前分类下存在商品
-        if (fatherPO.getItemCount() > 0) {
-            throw new MyServiceException("A0001", "当前父分类下存在商品 无法添加分类!");
+        if (fatherPO == null || fatherPO.getItemCount() > 0) {
+            throw new MyServiceException("A0001", "父分类不存在或者当前父分类下存在商品 无法添加分类!");
         }
         // 创建PO并存入数据库
-        CategoryPO savePO = new CategoryPO(null, name, parentId, true, 0, 1);
+        CategoryPO savePO = new CategoryPO(null, name, parentId, true, 0, 0);
         int ans = categoryDao.createCategory(savePO);
         if (ans == 0) {
             throw new MyServiceException("A0002", "插入失败!");

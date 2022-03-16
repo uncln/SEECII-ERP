@@ -34,7 +34,7 @@ public class CategoryController {
     }
 
     @GetMapping("/delete")
-    public Response updateCategory(@RequestParam(value = "id") int id) {
+    public Response deleteCategory(@RequestParam(value = "id") int id) {
         categoryService.deleteCategory(id);
         return Response.buildSuccess();
     }
