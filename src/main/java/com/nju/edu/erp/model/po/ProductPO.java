@@ -17,7 +17,7 @@ public class ProductPO {
     /**
      * 商品id
      */
-    private Integer id;
+    private String id;
 
     /**
      * 商品名
