@@ -5,7 +5,6 @@
         update product
         <set>
             <if test="name != null">`name` = #{name}, </if>
-            <if test="categoryId != null">category_id = #{categoryId}, </if>
             <if test="type != null">`type` = #{type}, </if>
             <if test="quantity != null">quantity = #{quantity},</if>
             <if test="purchasePrice != null">purchase_price = #{purchasePrice},</if>
@@ -16,14 +15,22 @@
         where id = #{id}
     </update>
 
-    <insert id = "createProduct" parameterType="CreateProductVO" useGeneratedKeys="true" keyProperty="id">
-        insert into product (`name`, category_id, `type`, quantity, purchase_price, retail_price)
-        values (#{name}, #{categoryId}, #{type}, 0, #{purchasePrice}, #{retailPrice})
+    <insert id = "createProduct" parameterType="ProductPO">
+        insert into product (id, `name`, category_id, `type`, quantity, purchase_price, retail_price)
+        values (#{id}, #{name}, #{categoryId}, #{type}, 0, #{purchasePrice}, #{retailPrice})
     </insert>
 
     <select id = "findById" resultMap="ProductPO">
         select * from product where id = #{id}
     </select>
+
+    <select id="findAll" resultMap="ProductPO">
+        select * from product
+    </select>
+
+    <delete id="deleteById">
+        delete from product where id = #{id}
+    </delete>
 
     <resultMap id="ProductPO" type="com.nju.edu.erp.model.po.ProductPO">
         <id column="id" property="id"></id>
@@ -34,6 +41,6 @@
         <result column="purchase_price" property="purchasePrice"></result>
         <result column="retail_price" property="retailPrice"></result>
         <result column="recent_pp" property="recentPp"></result>
-        <result column="recentrp" property="recentRp"></result>
+        <result column="recent_rp" property="recentRp"></result>
     </resultMap>
 </mapper>

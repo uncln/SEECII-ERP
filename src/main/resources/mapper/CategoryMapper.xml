@@ -16,7 +16,14 @@
     </select>
 
     <update id="updateById" parameterType="CategoryPO">
-        update category set `name` = #{name}, is_leaf = #{isLeaf}, item_count = #{itemCount}, item_index = #{itemIndex} where id = ${id}
+        update category
+        <set>
+            <if test = "name != null">`name` = #{name}, </if>
+            <if test = "isLeaf != null">is_leaf = #{isLeaf}, </if>
+            <if test = "itemCount != null">item_count = #{itemCount}, </if>
+            <if test = "itemIndex != null">item_index = #{itemIndex}, </if>
+        </set>
+        where id = #{id}
     </update>
 
     <delete id="deleteById">
