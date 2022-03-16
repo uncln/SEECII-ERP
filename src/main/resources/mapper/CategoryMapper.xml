@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.CategoryDao">
+
+    <insert id="createCategory" parameterType="CategoryPO" useGeneratedKeys="true" keyProperty="id">
+        insert into category (`name`, parent_id, is_leaf, item_count, item_index)
+        values (#{name}, #{parentId}, #{isLeaf}, #{itemCount}, #{itemIndex})
+    </insert>
+
+</mapper>
