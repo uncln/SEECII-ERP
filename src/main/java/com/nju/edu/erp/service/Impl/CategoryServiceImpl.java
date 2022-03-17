@@ -85,6 +85,9 @@ public class CategoryServiceImpl implements CategoryService {
         if (!categoryToDelete.isLeaf()) {
             throw new MyServiceException("A0005", "非叶子节点 不可删除！");
         }
+        if (categoryToDelete.getItemCount() > 0) {
+            throw new MyServiceException("A0006", "分类下存在商品，无法删除");
+        }
         categoryDao.deleteById(id);
     }
 

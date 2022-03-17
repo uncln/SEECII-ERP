@@ -113,6 +113,9 @@ public class ProductServiceImpl implements ProductService {
         StringBuffer ans = new StringBuffer();
         String categoryStr = categoryPO.getId().toString();
         String indexStr = categoryPO.getItemIndex().toString();
+        if (indexStr.length() > 5) {
+            throw new MyServiceException("B0006", "当前分类下商品编号已用完！");
+        }
         for (int i = 0; i < 11 - categoryStr.length(); i++)
             ans.append('0');
         ans.append(categoryStr);
