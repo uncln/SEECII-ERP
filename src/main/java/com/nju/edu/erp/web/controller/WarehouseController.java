@@ -19,18 +19,21 @@ public class WarehouseController {
         this.warehouseService = warehouseService;
     }
 
+    @CrossOrigin
     @PostMapping("/input")
     public Response warehouseInput(@RequestBody WarehouseInputFormVO warehouseInputFormVO){
         warehouseService.productWarehousing(warehouseInputFormVO);
         return Response.buildSuccess();
     }
 
+    @CrossOrigin
     @PostMapping("/output")
     public Response warehouseOutput(@RequestBody WarehouseOutputFormVO warehouseOutputFormVO){
         warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
         return Response.buildSuccess();
     }
 
+    @CrossOrigin
     @PostMapping("/product/count")
     public Response warehouseOutput(@RequestBody GetWareProductInfoParamsVO getWareProductInfoParamsVO){
         return Response.buildSuccess(warehouseService.getWareProductInfo(getWareProductInfoParamsVO));
