@@ -16,27 +16,23 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @CrossOrigin
     @GetMapping("/create")
     public Response createCategory(@RequestParam(value = "parentId") int parentId,
                                @RequestParam(value = "name") String name) {
         return Response.buildSuccess(categoryService.createCategory(parentId, name));
     }
 
-    @CrossOrigin
     @GetMapping("/queryAll")
     public Response queryAllCategory() {
         return Response.buildSuccess(categoryService.queryAllCategory());
     }
 
-    @CrossOrigin
     @GetMapping("/update")
     public Response updateCategory(@RequestParam(value = "id") int id,
                                    @RequestParam(value = "name") String name) {
         return Response.buildSuccess(categoryService.updateCategory(id, name));
     }
 
-    @CrossOrigin
     @GetMapping("/delete")
     public Response deleteCategory(@RequestParam(value = "id") int id) {
         categoryService.deleteCategory(id);

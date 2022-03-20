@@ -5,11 +5,13 @@ import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
 import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.web.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
-@RequestMapping("/warehouse")
+@RequestMapping(path = "/api/warehouse")
 public class WarehouseController {
 
     public WarehouseService warehouseService;
@@ -19,21 +21,20 @@ public class WarehouseController {
         this.warehouseService = warehouseService;
     }
 
-    @CrossOrigin
     @PostMapping("/input")
     public Response warehouseInput(@RequestBody WarehouseInputFormVO warehouseInputFormVO){
+        log.info(warehouseInputFormVO.toString());
         warehouseService.productWarehousing(warehouseInputFormVO);
         return Response.buildSuccess();
     }
 
-    @CrossOrigin
     @PostMapping("/output")
     public Response warehouseOutput(@RequestBody WarehouseOutputFormVO warehouseOutputFormVO){
+        log.info(warehouseOutputFormVO.toString());
         warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
         return Response.buildSuccess();
     }
 
-    @CrossOrigin
     @PostMapping("/product/count")
     public Response warehouseOutput(@RequestBody GetWareProductInfoParamsVO getWareProductInfoParamsVO){
         return Response.buildSuccess(warehouseService.getWareProductInfo(getWareProductInfoParamsVO));

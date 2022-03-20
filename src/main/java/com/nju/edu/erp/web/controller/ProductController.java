@@ -19,25 +19,21 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @CrossOrigin
     @PostMapping("/create")
     public Response createProduct(@RequestBody CreateProductVO createProductVO) {
         return Response.buildSuccess(productService.createProduct(createProductVO));
     }
 
-    @CrossOrigin
     @PostMapping("/update")
     public Response updateProduct(@RequestBody ProductInfoVO productInfoVO) {
         return Response.buildSuccess(productService.updateProduct(productInfoVO));
     }
 
-    @CrossOrigin
     @GetMapping("/queryAll")
     public Response findAllProduct() {
         return Response.buildSuccess(productService.queryAllProduct());
     }
 
-    @CrossOrigin
     @GetMapping("/delete")
     public Response deleteProduct(@RequestParam String id) {
         productService.deleteById(id);
