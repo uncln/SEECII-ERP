@@ -53,7 +53,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryVO> queryAllCategory() {
         List<CategoryPO> queryAns = categoryDao.findAll();
-        System.out.print(queryAns);
         List<CategoryVO> responseVO = queryAns.stream().map(categoryPO -> {
             CategoryVO categoryVO = new CategoryVO();
             BeanUtils.copyProperties(categoryPO, categoryVO);
