@@ -19,21 +19,17 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private final ProductDao productDao;
     private final WarehouseDao warehouseDao;
-    private final WarehouseInputDao warehouseInputDao;
-    private final WarehouseInputListDao warehouseInputListDao;
-    private final WarehouseOutputDao warehouseOutputDao;
-    private final WarehouseOutputListDao warehouseOutputListDao;
+    private final WarehouseInputSheetDao warehouseInputSheetDao;
+    private final WarehouseOutputSheetDao warehouseOutputSheetDao;
+
 
     @Autowired
-    public WarehouseServiceImpl(ProductDao productDao, WarehouseDao warehouseDao, WarehouseInputDao warehouseInputDao, WarehouseInputListDao warehouseInputListDao, WarehouseOutputDao warehouseOutputDao, WarehouseOutputListDao warehouseOutputListDao) {
+    public WarehouseServiceImpl(ProductDao productDao, WarehouseDao warehouseDao, WarehouseInputSheetDao warehouseInputSheetDao, WarehouseOutputSheetDao warehouseOutputSheetDao) {
         this.productDao = productDao;
         this.warehouseDao = warehouseDao;
-        this.warehouseInputDao = warehouseInputDao;
-        this.warehouseInputListDao = warehouseInputListDao;
-        this.warehouseOutputDao = warehouseOutputDao;
-        this.warehouseOutputListDao = warehouseOutputListDao;
+        this.warehouseInputSheetDao = warehouseInputSheetDao;
+        this.warehouseOutputSheetDao = warehouseOutputSheetDao;
     }
-
 
     @Override
     @Transactional
@@ -44,15 +40,15 @@ public class WarehouseServiceImpl implements WarehouseService {
          * 2. 根据上一次入库单来创建新入库单(单号/批次号/...)
          * 3. 更新"商品表", 插入"入库单表", 插入"入库单物品列表"表, 插入"库存表"
          */
-        WarehouseInputPO warehouseInputPO =  warehouseInputDao.getLatest();
-        if(warehouseInputPO == null) warehouseInputPO = WarehouseInputPO.builder().batchId(-1).build();
-        WarehouseInputPO toSave = new WarehouseInputPO();
-        toSave.setId(generateWarehouseInputId(warehouseInputPO.getId(), warehouseInputPO.getBatchId()));
-        toSave.setBatchId(generateBatchId(warehouseInputPO.getBatchId()));
+        WarehouseInputSheetPO warehouseInputSheetPO =  warehouseInputSheetDao.getLatest();
+        if(warehouseInputSheetPO == null) warehouseInputSheetPO = WarehouseInputSheetPO.builder().batchId(-1).build();
+        WarehouseInputSheetPO toSave = new WarehouseInputSheetPO();
+        toSave.setId(generateWarehouseInputId(warehouseInputSheetPO.getId(), warehouseInputSheetPO.getBatchId()));
+        toSave.setBatchId(generateBatchId(warehouseInputSheetPO.getBatchId()));
         toSave.setOperator(warehouseInputFormVO.getOperator());
         toSave.setUpdateTime(new Date());
 
-        List<WarehouseInputListPO> warehouseInputListPOList = new ArrayList<>();
+        List<WarehouseInputSheetContentPO> warehouseInputListPOSheetContent = new ArrayList<>();
         List<WarehousePO> warehousePOList = new ArrayList<>();
         warehouseInputFormVO.getList().forEach(item -> {
             ProductPO productPO = productDao.findById(item.getPid());
@@ -64,14 +60,14 @@ public class WarehouseServiceImpl implements WarehouseService {
             if(purchasePrice == null) {
                 purchasePrice = productPO.getPurchasePrice();
             }
-            WarehouseInputListPO  warehouseInputListPO = WarehouseInputListPO.builder()
+            WarehouseInputSheetContentPO warehouseInputSheetContentPO = WarehouseInputSheetContentPO.builder()
                     .wiId(toSave.getId())
                     .pid(item.getPid())
                     .quantity(item.getQuantity())
                     .purchasePrice(purchasePrice)
                     .productionDate(item.getProductionDate())
                     .remark(item.getRemark()).build();
-            warehouseInputListPOList.add(warehouseInputListPO);
+            warehouseInputListPOSheetContent.add(warehouseInputSheetContentPO);
             WarehousePO warehousePO = WarehousePO.builder()
                     .pid(item.getPid())
                     .quantity(item.getQuantity())
@@ -81,8 +77,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             warehousePOList.add(warehousePO);
         } );
 
-        warehouseInputDao.save(toSave);
-        warehouseInputListDao.saveBatch(warehouseInputListPOList);
+        warehouseInputSheetDao.save(toSave);
+        warehouseInputSheetDao.saveBatch(warehouseInputListPOSheetContent);
         warehouseDao.saveBatch(warehousePOList);
     }
 
@@ -99,26 +95,26 @@ public class WarehouseServiceImpl implements WarehouseService {
          *                 2. 批次是从前端传进来的
          *                 3. 对于warehouse表采取批量更新而不是批量新增操作
          */
-        WarehouseOutputPO warehouseOutputPO = warehouseOutputDao.getLatest();
-        WarehouseOutputPO toSave = new WarehouseOutputPO();
-        toSave.setId(generateWarehouseOutputId(warehouseOutputPO == null ? null : warehouseOutputPO.getId()));
+        WarehouseOutputSheetPO warehouseOutputSheetPO = warehouseOutputSheetDao.getLatest();
+        WarehouseOutputSheetPO toSave = new WarehouseOutputSheetPO();
+        toSave.setId(generateWarehouseOutputId(warehouseOutputSheetPO == null ? null : warehouseOutputSheetPO.getId()));
         toSave.setOperator(warehouseOutputFormVO.getOperator());
         toSave.setUpdateTime(new Date());
 
-        List<WarehouseOutputListPO> warehouseOutputListPOList = new ArrayList<>();
+        List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent = new ArrayList<>();
         warehouseOutputFormVO.getList().forEach(item -> {
             ProductPO productPO = productDao.findById(item.getPid());
             productPO.setQuantity(productPO.getQuantity()-item.getQuantity());
             productDao.updateById(productPO);
 
-            WarehouseOutputListPO  warehouseOutputListPO = WarehouseOutputListPO.builder()
+            WarehouseOutputSheetContentPO warehouseOutputSheetContentPO = WarehouseOutputSheetContentPO.builder()
                     .woId(toSave.getId())
                     .pid(item.getPid())
                     .quantity(item.getQuantity())
                     .purchasePrice(item.getPurchasePrice())
                     .batchId(item.getBatchId())
                     .remark(item.getRemark()).build();
-            warehouseOutputListPOList.add(warehouseOutputListPO);
+            warehouseOutputListPOSheetContent.add(warehouseOutputSheetContentPO);
             WarehousePO warehousePO = WarehousePO.builder()
                     .pid(item.getPid())
                     .batchId(item.getBatchId())
@@ -127,8 +123,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             warehouseDao.deductQuantity(warehousePO);
         } );
 
-        warehouseOutputDao.save(toSave);
-        warehouseOutputListDao.saveBatch(warehouseOutputListPOList);
+        warehouseOutputSheetDao.save(toSave);
+        warehouseOutputSheetDao.saveBatch(warehouseOutputListPOSheetContent);
     }
 
     /**

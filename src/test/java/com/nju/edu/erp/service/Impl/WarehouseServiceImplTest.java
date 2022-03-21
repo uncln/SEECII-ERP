@@ -1,18 +1,15 @@
 package com.nju.edu.erp.service.Impl;
 
-import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormListVO;
+import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.service.WarehouseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class WarehouseServiceImplTest {
@@ -24,14 +21,14 @@ class WarehouseServiceImplTest {
     void productWarehousing() {
         WarehouseInputFormVO warehouseInputFormVO = new WarehouseInputFormVO();
         warehouseInputFormVO.setOperator("zr");
-        List<WarehouseInputFormListVO> warehouseInputFormListVOS = new ArrayList<>();
-        WarehouseInputFormListVO warehouseInputFormListVO = WarehouseInputFormListVO.builder().productionDate(new Date()).pid("0000000000400000").purchasePrice(null).quantity(2000).remark("oaaa").build();
-        WarehouseInputFormListVO warehouseInputFormListVO2 = WarehouseInputFormListVO.builder().productionDate(new Date()).pid("0000000000500000").purchasePrice(null).quantity(1000).remark("paaa").build();
-        WarehouseInputFormListVO warehouseInputFormListVO3 = WarehouseInputFormListVO.builder().productionDate(new Date()).pid("0000000000500001").purchasePrice(null).quantity(2000).remark("qaaa").build();
-        warehouseInputFormListVOS.add(warehouseInputFormListVO);
-        warehouseInputFormListVOS.add(warehouseInputFormListVO2);
-        warehouseInputFormListVOS.add(warehouseInputFormListVO3);
-        warehouseInputFormVO.setList(warehouseInputFormListVOS);
+        List<WarehouseInputFormContentVO> warehouseInputFormContentVOS = new ArrayList<>();
+        WarehouseInputFormContentVO warehouseInputFormContentVO = WarehouseInputFormContentVO.builder().productionDate(new Date()).pid("0000000000400000").purchasePrice(null).quantity(2000).remark("oaaa").build();
+        WarehouseInputFormContentVO warehouseInputFormContentVO2 = WarehouseInputFormContentVO.builder().productionDate(new Date()).pid("0000000000500000").purchasePrice(null).quantity(1000).remark("paaa").build();
+        WarehouseInputFormContentVO warehouseInputFormContentVO3 = WarehouseInputFormContentVO.builder().productionDate(new Date()).pid("0000000000500001").purchasePrice(null).quantity(2000).remark("qaaa").build();
+        warehouseInputFormContentVOS.add(warehouseInputFormContentVO);
+        warehouseInputFormContentVOS.add(warehouseInputFormContentVO2);
+        warehouseInputFormContentVOS.add(warehouseInputFormContentVO3);
+        warehouseInputFormVO.setList(warehouseInputFormContentVOS);
 //        warehouseService.productWarehousing(warehouseInputFormVO);
     }
 }

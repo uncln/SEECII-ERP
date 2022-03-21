@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class WarehouseServiceTest {
 
@@ -24,8 +22,8 @@ class WarehouseServiceTest {
         a.addAll(warehouseService.getWareProductInfo(GetWareProductInfoParamsVO.builder().pid("0000000000400000").quantity(1100).remark("lulalulalei").build()));
 
 
-        List<WarehouseOutputFormListVO> warehouseOutputFormListVOS = a.stream().map(x -> WarehouseOutputFormListVO.builder().pid(x.getProductId()).batchId(x.getBatchId()).purchasePrice(x.getPurchasePrice()).quantity(x.getSelectedQuantity()).remark(x.getRemark()).build()).collect(Collectors.toList());
-        WarehouseOutputFormVO warehouseOutputFormVO = WarehouseOutputFormVO.builder().list(warehouseOutputFormListVOS).operator("zyy").build();
+        List<WarehouseOutputFormContentVO> warehouseOutputFormContentVOS = a.stream().map(x -> WarehouseOutputFormContentVO.builder().pid(x.getProductId()).batchId(x.getBatchId()).purchasePrice(x.getPurchasePrice()).quantity(x.getSelectedQuantity()).remark(x.getRemark()).build()).collect(Collectors.toList());
+        WarehouseOutputFormVO warehouseOutputFormVO = WarehouseOutputFormVO.builder().list(warehouseOutputFormContentVOS).operator("zyy").build();
 //        warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
     }
 

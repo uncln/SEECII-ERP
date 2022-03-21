@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WarehouseInputFormListVO { // 入库单内部结构
+public class WarehouseInputFormContentVO { // 入库单内部结构
     private String pid;
     private BigDecimal purchasePrice;
     private Integer quantity;

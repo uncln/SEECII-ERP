@@ -12,13 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class WarehouseInputFormVO { // 入库单
-    private List<WarehouseInputFormListVO> list;
+    private List<WarehouseInputFormContentVO> list;
     private String operator;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for(WarehouseInputFormListVO item: list) {
+        for(WarehouseInputFormContentVO item: list) {
             sb.append(item.toString());
             sb.append(" | ");
         }

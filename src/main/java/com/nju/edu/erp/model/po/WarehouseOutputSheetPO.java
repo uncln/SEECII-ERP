@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WarehouseOutputPO {
+public class WarehouseOutputSheetPO {
     /**
      * CKD + 日期 + index = 入库单编号
      */
