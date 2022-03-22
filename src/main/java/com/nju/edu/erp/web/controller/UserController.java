@@ -9,6 +9,7 @@ import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.service.ProductService;
 import com.nju.edu.erp.web.Response;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,17 @@ public class UserController {
         return Response.buildSuccess(authToken);
     }
 
+    @PostMapping("/register")
+    public Response userRegister(@RequestBody UserVO userVO) {
+        User user = userDao.findByUsername(userVO.getName());
+        if (user != null) {
+            throw new MyServiceException("A0000", "用户名已存在");
+        }
+        User userSave = new User();
+        BeanUtils.copyProperties(userVO, userSave);
+        userDao.createUser(userSave);
+        return Response.buildSuccess();
+    }
 
     @GetMapping("/auth")
     public Response userAuth(@RequestParam(name = "token") String token) {

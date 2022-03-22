@@ -5,6 +5,17 @@
         select * from user where `name` = #{username} and password = #{password}
     </select>
 
+    <select id = "findByUsername" resultMap="User">
+        select * from user where `name` = #{username}
+    </select>
+
+
+    <insert id = "createUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (password, `name`, `role`)
+        values (#{password}, #{name}, #{role})
+    </insert>
+
+
     <resultMap id="User" type="com.nju.edu.erp.model.po.User">
         <id column="id" property="id"></id>
         <result column="name" property="name"></result>
