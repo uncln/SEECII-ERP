@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nju.edu.erp.dao.WarehouseInputSheetDao">
     <insert id="save" parameterType="WarehouseInputSheetPO">
-        insert into warehouse_input_sheet (id, batch_id, operator, update_time, purchase_sheet_id, state)
-        values (#{id},#{batchId},#{operator},#{updateTime},#{purchaseSheetId},#{state})
+        insert into warehouse_input_sheet (id, batch_id, operator, create_time, purchase_sheet_id, state)
+        values (#{id},#{batchId},#{operator},#{createTime},#{purchaseSheetId},#{state})
     </insert>
 
     <select id="getLatest" resultMap="WarehouseInputSheetPO">
@@ -21,7 +21,7 @@
         <id column="id" property="id"></id>
         <result column="batch_id" property="batchId"></result>
         <result column="operator" property="operator"></result>
-        <result column="update_time" property="updateTime"></result>
+        <result column="create_time" property="createTime"></result>
         <result column="purchase_sheet_id" property="purchaseSheetId"></result>
         <result column="state" property="state"></result>
     </resultMap>

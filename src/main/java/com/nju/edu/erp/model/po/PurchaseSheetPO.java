@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -37,4 +38,8 @@ public class PurchaseSheetPO {
      * 单据状态
      */
     private PurchaseSheetState state;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

@@ -33,31 +33,36 @@ public class WarehouseServiceImpl implements WarehouseService {
         this.warehouseOutputSheetDao = warehouseOutputSheetDao;
     }
 
+    /**
+     * 创建入库单
+     * @param warehouseInputFormVO 入库单
+     */
     @Override
     @Transactional
     public void productWarehousing(WarehouseInputFormVO warehouseInputFormVO) {
-        // TODO
         /**
          * 商品入库
          * 1. 查看上一次入库单
          * 2. 根据上一次入库单来创建新入库单(单号/批次号/...)
-         * 3. 更新"商品表", 插入"入库单表", 插入"入库单物品列表"表, 插入"库存表"
+         * 3. 更新"商品表", 插入"入库单表", 插入"入库单物品列表"表, 插入"库存表" -> 部分步骤放在了审批后..
          */
         WarehouseInputSheetPO warehouseInputSheetPO =  warehouseInputSheetDao.getLatest();
         if(warehouseInputSheetPO == null) warehouseInputSheetPO = WarehouseInputSheetPO.builder().batchId(-1).build();
         WarehouseInputSheetPO toSave = new WarehouseInputSheetPO();
         toSave.setId(generateWarehouseInputId(warehouseInputSheetPO.getId(), warehouseInputSheetPO.getBatchId()));
         toSave.setBatchId(generateBatchId(warehouseInputSheetPO.getBatchId()));
-        toSave.setOperator(warehouseInputFormVO.getOperator());
-        toSave.setUpdateTime(new Date());
+//        toSave.setOperator(warehouseInputFormVO.getOperator());
+        toSave.setCreateTime(new Date());
+        toSave.setPurchaseSheetId(warehouseInputFormVO.getPurchaseSheetId());
+        toSave.setState(WarehouseInputSheetState.DRAFT);
 
         List<WarehouseInputSheetContentPO> warehouseInputListPOSheetContent = new ArrayList<>();
-        List<WarehousePO> warehousePOList = new ArrayList<>();
+//        List<WarehousePO> warehousePOList = new ArrayList<>();
         warehouseInputFormVO.getList().forEach(item -> {
             ProductPO productPO = productDao.findById(item.getPid());
-            productPO.setQuantity(productPO.getQuantity()+item.getQuantity());
-            productPO.setRecentPp(item.getPurchasePrice());
-            productDao.updateById(productPO);
+//            productPO.setQuantity(productPO.getQuantity()+item.getQuantity());
+//            productPO.setRecentPp(item.getPurchasePrice());
+//            productDao.updateById(productPO);
 
             BigDecimal purchasePrice = item.getPurchasePrice();
             if(purchasePrice == null) {
@@ -71,24 +76,24 @@ public class WarehouseServiceImpl implements WarehouseService {
                     .productionDate(item.getProductionDate())
                     .remark(item.getRemark()).build();
             warehouseInputListPOSheetContent.add(warehouseInputSheetContentPO);
-            WarehousePO warehousePO = WarehousePO.builder()
-                    .pid(item.getPid())
-                    .quantity(item.getQuantity())
-                    .purchasePrice(purchasePrice)
-                    .batchId(toSave.getBatchId())
-                    .productionDate(item.getProductionDate()).build();
-            warehousePOList.add(warehousePO);
+//            WarehousePO warehousePO = WarehousePO.builder()
+//                    .pid(item.getPid())
+//                    .quantity(item.getQuantity())
+//                    .purchasePrice(purchasePrice)
+//                    .batchId(toSave.getBatchId())
+//                    .productionDate(item.getProductionDate()).build();
+//            warehousePOList.add(warehousePO);
         } );
 
         warehouseInputSheetDao.save(toSave);
         warehouseInputSheetDao.saveBatch(warehouseInputListPOSheetContent);
-        warehouseDao.saveBatch(warehousePOList);
+//        warehouseDao.saveBatch(warehousePOList);
     }
 
     @Override
     @Transactional
     public void productOutOfWarehouse(WarehouseOutputFormVO warehouseOutputFormVO) {
-        // TODO
+        // TODO 需要进行修改
         /**
          * 商品出库
          * 1. 查到上一次出库单的ID
@@ -103,7 +108,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         WarehouseOutputSheetPO toSave = new WarehouseOutputSheetPO();
         toSave.setId(generateWarehouseOutputId(warehouseOutputSheetPO == null ? null : warehouseOutputSheetPO.getId()));
         toSave.setOperator(warehouseOutputFormVO.getOperator());
-        toSave.setUpdateTime(new Date());
+        toSave.setCreateTime(new Date());
 
         List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent = new ArrayList<>();
         warehouseOutputFormVO.getList().forEach(item -> {

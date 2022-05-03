@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nju.edu.erp.dao.WarehouseOutputSheetDao">
     <insert id="save" parameterType="WarehouseOutputSheetPO">
-        insert into warehouse_output_sheet (id, operator, update_time)
-        values (#{id},#{operator},#{updateTime})
+        insert into warehouse_output_sheet (id, operator, create_time)
+        values (#{id},#{operator},#{createTime})
     </insert>
 
     <select id="getLatest" resultMap="WarehouseOutputSheetPO">
@@ -20,6 +20,6 @@
     <resultMap id="WarehouseOutputSheetPO" type="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
         <id column="id" property="id"></id>
         <result column="operator" property="operator"></result>
-        <result column="update_time" property="updateTime"></result>
+        <result column="create_time" property="createTime"></result>
     </resultMap>
 </mapper>

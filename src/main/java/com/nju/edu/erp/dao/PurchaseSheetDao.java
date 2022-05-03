@@ -48,4 +48,6 @@ public interface PurchaseSheetDao {
     int updateStateV2(String purchaseSheetId, PurchaseSheetState prevState, PurchaseSheetState state);
 
     PurchaseSheetPO findOneById(String purchaseSheetId);
+
+    List<PurchaseSheetContentPO> findContentByPurchaseSheetId(String purchaseSheetId);
 }

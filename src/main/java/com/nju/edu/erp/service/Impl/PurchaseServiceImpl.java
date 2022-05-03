@@ -1,12 +1,21 @@
 package com.nju.edu.erp.service.Impl;
 
+import com.nju.edu.erp.dao.ProductDao;
 import com.nju.edu.erp.dao.PurchaseSheetDao;
 import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
+import com.nju.edu.erp.model.po.CustomerPO;
+import com.nju.edu.erp.model.po.ProductPO;
 import com.nju.edu.erp.model.po.PurchaseSheetContentPO;
 import com.nju.edu.erp.model.po.PurchaseSheetPO;
+import com.nju.edu.erp.model.vo.ProductInfoVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetContentVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
+import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
+import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
+import com.nju.edu.erp.service.CustomerService;
+import com.nju.edu.erp.service.ProductService;
 import com.nju.edu.erp.service.PurchaseService;
+import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,9 +33,21 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     PurchaseSheetDao purchaseSheetDao;
 
+    ProductService productService;
+
+    ProductDao productDao;
+
+    CustomerService customerService;
+
+    WarehouseService warehouseService;
+
     @Autowired
-    public PurchaseServiceImpl(PurchaseSheetDao purchaseSheetDao) {
+    public PurchaseServiceImpl(PurchaseSheetDao purchaseSheetDao, ProductService productService, CustomerService customerService, WarehouseService warehouseService,ProductDao productDao) {
         this.purchaseSheetDao = purchaseSheetDao;
+        this.productService = productService;
+        this.customerService = customerService;
+        this.warehouseService = warehouseService;
+        this.productDao = productDao;
     }
 
     /**
@@ -38,6 +60,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public void makePurchaseSheet(PurchaseSheetVO purchaseSheetVO) {
         PurchaseSheetPO purchaseSheetPO = new PurchaseSheetPO();
         BeanUtils.copyProperties(purchaseSheetVO, purchaseSheetPO);
+        purchaseSheetPO.setCreateTime(new Date());
         PurchaseSheetPO latest = purchaseSheetDao.getLatest();
         String id = IdGenerator.generateSheetId(latest == null ? null : latest.getId(), "JHD");
         purchaseSheetPO.setId(id);
@@ -48,7 +71,13 @@ public class PurchaseServiceImpl implements PurchaseService {
             PurchaseSheetContentPO pContentPO = new PurchaseSheetContentPO();
             BeanUtils.copyProperties(content,pContentPO);
             pContentPO.setPurchaseSheetId(id);
-            pContentPO.setTotalPrice(pContentPO.getUnitPrice().multiply(BigDecimal.valueOf(pContentPO.getQuantity())));
+            BigDecimal unitPrice = pContentPO.getUnitPrice();
+            if(unitPrice == null) {
+                ProductPO product = productDao.findById(content.getPid());
+                unitPrice = product.getPurchasePrice();
+                pContentPO.setUnitPrice(unitPrice);
+            }
+            pContentPO.setTotalPrice(unitPrice.multiply(BigDecimal.valueOf(pContentPO.getQuantity())));
             pContentPOList.add(pContentPO);
             totalAmount = totalAmount.add(pContentPO.getTotalPrice());
         }
@@ -109,8 +138,38 @@ public class PurchaseServiceImpl implements PurchaseService {
             if(state.equals(PurchaseSheetState.SUCCESS)) {
                 // TODO 审批完成, 修改一系列状态
                 // 更新商品表的最新进价
-                // 更新客户表(更新应收字段)
+                    // 根据purchaseSheetId查到对应的content -> 得到商品id和单价
+                    // 根据商品id和单价更新商品最近进价recentPp
+                List<PurchaseSheetContentPO> purchaseSheetContent =  purchaseSheetDao.findContentByPurchaseSheetId(purchaseSheetId);
+                List<WarehouseInputFormContentVO> warehouseInputFormContentVOS = new ArrayList<>();
+
+                for(PurchaseSheetContentPO content : purchaseSheetContent) {
+                    ProductInfoVO productInfoVO = new ProductInfoVO();
+                    productInfoVO.setId(content.getPid());
+                    productInfoVO.setRecentPp(content.getUnitPrice());
+                    productService.updateProduct(productInfoVO);
+
+                    WarehouseInputFormContentVO wiContentVO = new WarehouseInputFormContentVO();
+                    wiContentVO.setPurchasePrice(content.getUnitPrice());
+                    wiContentVO.setQuantity(content.getQuantity());
+                    wiContentVO.setRemark(content.getRemark());
+                    wiContentVO.setPid(content.getPid());
+                    warehouseInputFormContentVOS.add(wiContentVO);
+                }
+                // 更新客户表(更新应付字段)
+                    // 更新应付 payable
+                PurchaseSheetPO purchaseSheet = purchaseSheetDao.findOneById(purchaseSheetId);
+                CustomerPO customerPO = customerService.findCustomerById(purchaseSheet.getSupplier());
+                customerPO.setPayable(customerPO.getPayable().add(purchaseSheet.getTotalAmount()));
+                customerService.updateCustomer(customerPO);
+
                 // 制定入库单草稿(在这里关联进货单)
+                    // 调用创建入库单的方法
+                WarehouseInputFormVO warehouseInputFormVO = new WarehouseInputFormVO();
+                warehouseInputFormVO.setOperator(null); // 暂时不填操作人(确认草稿单的时候填写)
+                warehouseInputFormVO.setPurchaseSheetId(purchaseSheetId);
+                warehouseInputFormVO.setList(warehouseInputFormContentVOS);
+                warehouseService.productWarehousing(warehouseInputFormVO);
             }
         }
     }

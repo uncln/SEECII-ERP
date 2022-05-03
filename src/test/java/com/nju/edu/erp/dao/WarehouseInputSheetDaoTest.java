@@ -28,7 +28,7 @@ class WarehouseInputSheetDaoTest {
 //                        .operator("ccc")
 //                        .batchId(123123)
 //                        .state(WarehouseInputSheetState.DRAFT)
-//                        .updateTime(new Date())
+//                        .createTime(new Date())
 //                .build());
     }
 }

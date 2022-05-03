@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nju.edu.erp.dao.PurchaseSheetDao">
     <insert id="save" parameterType="PurchaseSheetPO">
-        insert into purchase_sheet (id, supplier, operator, remark, total_amount, state)
-        values (#{id},#{supplier},#{operator},#{remark},#{totalAmount},#{state})
+        insert into purchase_sheet (id, supplier, operator, remark, total_amount, state, create_time)
+        values (#{id},#{supplier},#{operator},#{remark},#{totalAmount},#{state}, #{createTime})
     </insert>
     <update id="updateState">
         update purchase_sheet
@@ -28,6 +28,9 @@
     <select id="findOneById" resultType="com.nju.edu.erp.model.po.PurchaseSheetPO">
         select * from purchase_sheet where id=#{purchaseSheetId}
     </select>
+    <select id="findContentByPurchaseSheetId" resultType="com.nju.edu.erp.model.po.PurchaseSheetContentPO">
+        select * from purchase_sheet_content where purchase_sheet_id = #{purchase_sheet_id}
+    </select>
 
     <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id">
         insert into purchase_sheet_content (purchase_sheet_id, pid, quantity, unit_price, total_price, remark) values
@@ -43,5 +46,6 @@
         <result column="remark" property="remark"></result>
         <result column="total_amount" property="totalAmount"></result>
         <result column="state" property="state"></result>
+        <result column="create_time" property="createTime"></result>
     </resultMap>
 </mapper>

@@ -23,21 +23,23 @@ public class WarehouseController {
         this.warehouseService = warehouseService;
     }
 
-    @PostMapping("/input")
-    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
-    public Response warehouseInput(@RequestBody WarehouseInputFormVO warehouseInputFormVO){
-        log.info(warehouseInputFormVO.toString());
-        warehouseService.productWarehousing(warehouseInputFormVO);
-        return Response.buildSuccess();
-    }
+//    // 已废弃, 出库入库现在与销售进货关联
+//    @PostMapping("/input")
+//    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
+//    public Response warehouseInput(@RequestBody WarehouseInputFormVO warehouseInputFormVO){
+//        log.info(warehouseInputFormVO.toString());
+//        warehouseService.productWarehousing(warehouseInputFormVO);
+//        return Response.buildSuccess();
+//    }
 
-    @PostMapping("/output")
-    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
-    public Response warehouseOutput(@RequestBody WarehouseOutputFormVO warehouseOutputFormVO){
-        log.info(warehouseOutputFormVO.toString());
-        warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
-        return Response.buildSuccess();
-    }
+//    //已废弃
+//    @PostMapping("/output")
+//    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
+//    public Response warehouseOutput(@RequestBody WarehouseOutputFormVO warehouseOutputFormVO){
+//        log.info(warehouseOutputFormVO.toString());
+//        warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
+//        return Response.buildSuccess();
+//    }
 
     @PostMapping("/product/count")
     @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})

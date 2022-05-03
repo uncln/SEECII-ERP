@@ -25,7 +25,7 @@ public interface WarehouseOutputSheetDao {
 
     /**
      * 把出库单上的具体内容存入数据库
-     * @param warehouseInputListPOList 出库单上的具体内容
+     * @param warehouseOutputListPOSheetContent 出库单上的具体内容
      */
     void saveBatch(List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent);
 }

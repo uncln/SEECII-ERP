@@ -24,7 +24,7 @@ public class WarehouseOutputSheetPO {
     /**
      * 操作时间
      */
-    private Date updateTime;
+    private Date createTime;
     /**
      * 关联的销售单据
      */

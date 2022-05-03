@@ -1,24 +1,33 @@
 package com.nju.edu.erp.service.Impl;
 
+import com.nju.edu.erp.dao.CustomerDao;
 import com.nju.edu.erp.enums.CustomerType;
 import com.nju.edu.erp.model.po.CustomerPO;
 import com.nju.edu.erp.model.vo.CustomerVO;
 import com.nju.edu.erp.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
+    private final CustomerDao customerDao;
+
+    @Autowired
+    public CustomerServiceImpl(CustomerDao customerDao) {
+        this.customerDao = customerDao;
+    }
+
     /**
      * 根据id更新客户信息
      *
-     * @param customerVO 客户信息
+     * @param customerPO 客户信息
      */
     @Override
-    public void updateCustomer(CustomerVO customerVO) {
-        // TODO
-
+    public void updateCustomer(CustomerPO customerPO) {
+        customerDao.updateOne(customerPO);
     }
 
     /**
@@ -31,5 +40,10 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerPO> getCustomersByType(CustomerType type) {
         // TODO
         return null;
+    }
+
+    @Override
+    public CustomerPO findCustomerById(Integer supplier) {
+        return customerDao.findOneById(supplier);
     }
 }
