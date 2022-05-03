@@ -1,6 +1,7 @@
 package com.nju.edu.erp.service.Impl;
 
 import com.nju.edu.erp.dao.*;
+import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.warehouse.*;
 import com.nju.edu.erp.service.WarehouseService;
@@ -34,6 +35,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void productWarehousing(WarehouseInputFormVO warehouseInputFormVO) {
+        // TODO
         /**
          * 商品入库
          * 1. 查看上一次入库单
@@ -85,6 +87,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void productOutOfWarehouse(WarehouseOutputFormVO warehouseOutputFormVO) {
+        // TODO
         /**
          * 商品出库
          * 1. 查到上一次出库单的ID
@@ -181,6 +184,41 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         return res;
     }
+
+    /**
+     * 根据进货单制定入库单草稿
+     *
+     * @param purchaseSheetPO 进货单
+     */
+    @Override
+    public void makeWarehouseInputDraft(PurchaseSheetPO purchaseSheetPO) {
+        // TODO
+    }
+
+    /**
+     * 审批入库单(仓库管理员进行确认/总经理进行审批)
+     *
+     * @param warehouseInputSheetId 入库单id
+     * @param state                 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
+     */
+    @Override
+    public void approval(String warehouseInputSheetId, WarehouseInputSheetState state) {
+        // TODO
+
+    }
+
+    /**
+     * 通过状态获取入库单(state == null 时获取全部入库单)
+     *
+     * @param state 入库单状态
+     * @return 入库单
+     */
+    @Override
+    public List<WarehouseInputSheetPO> getWareHouseInputSheetByState(WarehouseInputSheetState state) {
+        // TODO
+        return null;
+    }
+
     /**
      * 获取新批次
      * @param batchId 批次

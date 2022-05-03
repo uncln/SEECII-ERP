@@ -1,40 +1,40 @@
 package com.nju.edu.erp.model.po;
 
-import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WarehouseInputSheetPO {
+public class PurchaseSheetPO {
     /**
-     * RKD + 日期 + index = 入库单编号
+     * 进货单单据编号（格式为：JHD-yyyyMMdd-xxxxx
      */
     private String id;
     /**
-     * 批次
+     * 供应商
      */
-    private Integer batchId;
+    private String supplier;
     /**
      * 操作员
      */
     private String operator;
     /**
-     * 操作时间
+     * 备注
      */
-    private Date updateTime;
+    private String remark;
     /**
-     * 关联的进货单据
+     * 总额合计
      */
-    private String purchaseSheetId;
+    private BigDecimal totalAmount;
     /**
      * 单据状态
      */
-    private WarehouseInputSheetState state;
+    private PurchaseSheetState state;
 }
