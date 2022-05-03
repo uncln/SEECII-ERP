@@ -20,9 +20,9 @@ public class PurchaseSheetVO {
      */
     private String id;
     /**
-     * 供应商
+     * 供应商id
      */
-    private String supplier;
+    private Integer supplier;
     /**
      * 操作员
      */

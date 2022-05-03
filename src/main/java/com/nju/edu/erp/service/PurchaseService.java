@@ -23,10 +23,10 @@ public interface PurchaseService {
     /**
      * 根据进货单id进行审批(state == "待二级审批"/"审批完成"/"审批失败")
      * 在controller层进行权限控制
-     * @param PurchaseSheetId 进货单id
+     * @param purchaseSheetId 进货单id
      * @param state 进货单修改后的状态
      */
-    void approval(String PurchaseSheetId, PurchaseSheetState state);
+    void approval(String purchaseSheetId, PurchaseSheetState state);
 
 
 

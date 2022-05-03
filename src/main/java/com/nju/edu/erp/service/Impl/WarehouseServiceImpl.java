@@ -5,6 +5,7 @@ import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.warehouse.*;
 import com.nju.edu.erp.service.WarehouseService;
+import com.nju.edu.erp.utils.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -136,18 +137,7 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @return 新的出库单单号
      */
     private String generateWarehouseOutputId(String id) { // "CKD-20220216-00000"
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        String today = dateFormat.format(new Date());
-        if(id == null) {
-            return "CKD-" + today + "-" + String.format("%05d", 0);
-        }
-        String lastDate = id.split("-")[1];
-        if(lastDate.equals(today)) {
-            String prevNum = id.split("-")[2];
-            return "CKD-" + today + "-" + String.format("%05d", Integer.parseInt(prevNum) + 1);
-        } else {
-            return "CKD-" + today + "-" + String.format("%05d", 0);
-        }
+        return IdGenerator.generateSheetId(id, "CKD");
     }
 
     @Override

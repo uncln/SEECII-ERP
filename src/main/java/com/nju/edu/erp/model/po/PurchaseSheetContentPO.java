@@ -34,7 +34,7 @@ public class PurchaseSheetContentPO {
      */
     private BigDecimal unitPrice;
     /**
-     * 金额
+     * 总金额
      */
     private BigDecimal totalPrice;
     /**
