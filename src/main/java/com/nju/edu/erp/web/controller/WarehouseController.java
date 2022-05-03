@@ -1,5 +1,7 @@
 package com.nju.edu.erp.web.controller;
 
+import com.nju.edu.erp.auth.Authorized;
+import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/warehouse")
+@RequestMapping(path = "/warehouse")
 public class WarehouseController {
 
     public WarehouseService warehouseService;
@@ -22,6 +24,7 @@ public class WarehouseController {
     }
 
     @PostMapping("/input")
+    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
     public Response warehouseInput(@RequestBody WarehouseInputFormVO warehouseInputFormVO){
         log.info(warehouseInputFormVO.toString());
         warehouseService.productWarehousing(warehouseInputFormVO);
@@ -29,6 +32,7 @@ public class WarehouseController {
     }
 
     @PostMapping("/output")
+    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
     public Response warehouseOutput(@RequestBody WarehouseOutputFormVO warehouseOutputFormVO){
         log.info(warehouseOutputFormVO.toString());
         warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
@@ -36,6 +40,7 @@ public class WarehouseController {
     }
 
     @PostMapping("/product/count")
+    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
     public Response warehouseOutput(@RequestBody GetWareProductInfoParamsVO getWareProductInfoParamsVO){
         return Response.buildSuccess(warehouseService.getWareProductInfo(getWareProductInfoParamsVO));
     }
