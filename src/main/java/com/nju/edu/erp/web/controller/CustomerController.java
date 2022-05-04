@@ -5,10 +5,7 @@ import com.nju.edu.erp.model.vo.CustomerVO;
 import com.nju.edu.erp.service.CustomerService;
 import com.nju.edu.erp.web.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -21,8 +18,8 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PostMapping("/findByType")
-    public Response findByType(@RequestBody CustomerType type) {
+    @GetMapping("/findByType")
+    public Response findByType(@RequestParam CustomerType type) {
         return Response.buildSuccess(customerService.getCustomersByType(type));
     }
 

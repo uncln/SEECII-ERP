@@ -38,8 +38,8 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public List<CustomerPO> getCustomersByType(CustomerType type) {
-        // TODO
-        return null;
+
+        return customerDao.findAllByType(type);
     }
 
     @Override

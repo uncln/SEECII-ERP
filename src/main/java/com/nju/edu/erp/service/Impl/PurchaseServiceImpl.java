@@ -104,6 +104,14 @@ public class PurchaseServiceImpl implements PurchaseService {
         for(PurchaseSheetPO po: all) {
             PurchaseSheetVO vo = new PurchaseSheetVO();
             BeanUtils.copyProperties(po, vo);
+            List<PurchaseSheetContentPO> alll = purchaseSheetDao.findContentByPurchaseSheetId(po.getId());
+            List<PurchaseSheetContentVO> vos = new ArrayList<>();
+            for (PurchaseSheetContentPO p : alll) {
+                PurchaseSheetContentVO v = new PurchaseSheetContentVO();
+                BeanUtils.copyProperties(p, v);
+                vos.add(v);
+            }
+            vo.setPurchaseSheetContent(vos);
             res.add(vo);
         }
         return res;

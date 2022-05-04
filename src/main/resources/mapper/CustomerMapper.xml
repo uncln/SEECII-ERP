@@ -44,8 +44,13 @@
                 </set>
                 where id = #{id}
     </update>
+
     <select id="findOneById" resultType="com.nju.edu.erp.model.po.CustomerPO">
         select * from customer where id=#{supplier}
+    </select>
+
+    <select id="findAllByType" resultType="com.nju.edu.erp.model.po.CustomerPO">
+        select * from customer where `type` = #{type}
     </select>
 
     <resultMap id="CustomerPO" type="com.nju.edu.erp.model.po.CustomerPO">
