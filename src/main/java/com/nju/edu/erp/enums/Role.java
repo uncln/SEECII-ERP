@@ -1,8 +1,5 @@
 package com.nju.edu.erp.enums;
 
-/**
- * @author mars
- */
 
 public enum Role {
 

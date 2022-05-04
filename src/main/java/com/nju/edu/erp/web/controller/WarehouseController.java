@@ -2,6 +2,10 @@ package com.nju.edu.erp.web.controller;
 
 import com.nju.edu.erp.auth.Authorized;
 import com.nju.edu.erp.enums.Role;
+import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.exception.MyServiceException;
+import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
@@ -10,6 +14,8 @@ import com.nju.edu.erp.web.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -45,5 +51,40 @@ public class WarehouseController {
     @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
     public Response warehouseOutput(@RequestBody GetWareProductInfoParamsVO getWareProductInfoParamsVO){
         return Response.buildSuccess(warehouseService.getWareProductInfo(getWareProductInfoParamsVO));
+    }
+
+    @GetMapping("/inputSheet/pending")
+    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER})
+    public Response warehouseInputSheetPending(UserVO user,
+                                               @RequestParam(value = "sheetId") String sheetId,
+                                               @RequestParam(value = "state") WarehouseInputSheetState state) {
+        if (state.equals(WarehouseInputSheetState.PENDING)) {
+            warehouseService.approval(user, sheetId, state);
+        }
+        else {
+            throw new MyServiceException("C00001", "越权访问！");
+        }
+        return Response.buildSuccess();
+    }
+
+    @GetMapping("/inputSheet/approve")
+    @Authorized(roles = {Role.ADMIN, Role.GM})
+    public Response warehouseInputSheetApprove(UserVO user,
+                                               @RequestParam(value = "sheetId") String sheetId,
+                                               @RequestParam(value = "state") WarehouseInputSheetState state) {
+        if (state.equals(WarehouseInputSheetState.FAILURE) || state.equals(WarehouseInputSheetState.SUCCESS)) {
+            warehouseService.approval(user, sheetId, state);
+        }
+        else {
+            throw new MyServiceException("C00001", "越权访问！");
+        }
+        return Response.buildSuccess();
+    }
+
+    @GetMapping("/inputSheet/state")
+    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER})
+    public Response getWarehouseInputSheet(@RequestParam(value = "state", required = false) WarehouseInputSheetState state) {
+        List<WarehouseInputSheetPO> ans = warehouseService.getWareHouseInputSheetByState(state);
+        return Response.buildSuccess(ans);
     }
 }

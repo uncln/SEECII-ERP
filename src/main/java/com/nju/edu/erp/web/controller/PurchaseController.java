@@ -63,7 +63,7 @@ public class PurchaseController {
      * 根据状态查看销售单
      */
     @GetMapping(value = "/sheet-show")
-    public Response showSheetByState(@RequestParam("state") PurchaseSheetState state)  {
+    public Response showSheetByState(@RequestParam(value = "state", required = false) PurchaseSheetState state)  {
         return Response.buildSuccess(purchaseService.getPurchaseSheetByState(state));
     }
 

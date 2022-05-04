@@ -40,7 +40,7 @@ public class AuthAspect {
 
     @Before(value = "execution(public * com.nju.edu.erp.web.controller.*.*(..)) && @annotation(authorized)")
     public void authCheck(JoinPoint joinPoint, Authorized authorized) {
-//        try {
+        try {
             HttpServletRequest httpServletRequest = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String token = Optional.ofNullable(httpServletRequest.getHeader("Authorization")).
                     orElseThrow(() -> new MyServiceException("A0002", "用户未获得第三方登录授权"));
@@ -53,14 +53,14 @@ public class AuthAspect {
                 // 将token的对象赋值给切面方法的user参数
                 Object[] objects = joinPoint.getArgs();
                 for (Object o : objects) {
-                    if (o instanceof User) {
+                    if (o instanceof UserVO) {
                         BeanUtils.copyProperties(user, o);
                         break;
                     }
                 }
             }
-//        }catch (MyServiceException e) {
-//            throw new MyServiceException("A0004", "认证失败");
-//        }
+        }catch (MyServiceException e) {
+            throw new MyServiceException("A0004", "认证失败");
+        }
     }
 }

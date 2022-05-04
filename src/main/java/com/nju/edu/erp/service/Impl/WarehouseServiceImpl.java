@@ -2,7 +2,9 @@ package com.nju.edu.erp.service.Impl;
 
 import com.nju.edu.erp.dao.*;
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.exception.MyServiceException;
 import com.nju.edu.erp.model.po.*;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.*;
 import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
@@ -181,25 +183,37 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
-     * 根据进货单制定入库单草稿
-     *
-     * @param purchaseSheetPO 进货单
-     */
-    @Override
-    public void makeWarehouseInputDraft(PurchaseSheetPO purchaseSheetPO) {
-        // TODO
-    }
-
-    /**
      * 审批入库单(仓库管理员进行确认/总经理进行审批)
      *
      * @param warehouseInputSheetId 入库单id
      * @param state                 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
      */
     @Override
-    public void approval(String warehouseInputSheetId, WarehouseInputSheetState state) {
+    public void approval(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
         // TODO
+        // 也许要加一个修改草稿的接口 此处只是审批通过并修改操作员
+        if (state.equals(WarehouseInputSheetState.PENDING)) {
+            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
+            warehouseInputSheetPO.setOperator(user.getName());
+            warehouseInputSheetPO.setState(state);
+            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
+        }
+        else {
+            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
+            warehouseInputSheetPO.setState(state);
+            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
+            // 获取对应的商品 更新仓库相关数据
+            List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
+            for (WarehouseInputSheetContentPO product : productsList) {
+                ProductPO productPO = productDao.findById(product.getPid());
+                // 更新最近进价
+                productPO.setRecentPp(product.getPurchasePrice());
+                // 更新最新零售价
+                productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
+                productDao.updateById(productPO);
+            }
 
+        }
     }
 
     /**
@@ -210,8 +224,12 @@ public class WarehouseServiceImpl implements WarehouseService {
      */
     @Override
     public List<WarehouseInputSheetPO> getWareHouseInputSheetByState(WarehouseInputSheetState state) {
-        // TODO
-        return null;
+        if (state == null) {
+            return warehouseInputSheetDao.getAllSheets();
+        }
+        else {
+            return warehouseInputSheetDao.getDraftSheets(state);
+        }
     }
 
     /**

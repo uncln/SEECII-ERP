@@ -18,7 +18,7 @@ public class TestEnumController {
     }
 
     @GetMapping(value = "/")
-    public Response test2(@RequestParam("state") PurchaseSheetState state)  {
+    public Response test2(@RequestParam(value = "state", required = false) PurchaseSheetState state)  {
         System.out.println(Response.buildSuccess(state));
         return Response.buildSuccess(state);
     }
