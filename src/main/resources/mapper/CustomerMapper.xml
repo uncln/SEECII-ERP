@@ -62,7 +62,7 @@
         <result column="address" property="address"></result>
         <result column="zipcode" property="zipcode"></result>
         <result column="email" property="email"></result>
-        <result column="line_of_credit" property="lineaOfCredit"></result>
+        <result column="line_of_credit" property="lineOfCredit"></result>
         <result column="receivable" property="receivable"></result>
         <result column="payable" property="payable"></result>
         <result column="operator" property="operator"></result>

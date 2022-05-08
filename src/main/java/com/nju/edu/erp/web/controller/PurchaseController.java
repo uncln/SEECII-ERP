@@ -1,5 +1,7 @@
 package com.nju.edu.erp.web.controller;
 
+import com.nju.edu.erp.auth.Authorized;
+import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 import com.nju.edu.erp.service.PurchaseService;
@@ -21,6 +23,7 @@ public class PurchaseController {
     /**
      * 销售人员制定进货单
      */
+    @Authorized (roles = {Role.FINANCIAL_STAFF, Role.FINANCIAL_MANAGER, Role.GM})
     @PostMapping(value = "/sheet-make")
     public Response makePurchaseOrder(@RequestBody PurchaseSheetVO purchaseSheetVO)  {
         purchaseService.makePurchaseSheet(purchaseSheetVO);
@@ -33,6 +36,7 @@ public class PurchaseController {
      * @param state 修改后的状态("审批失败"/"待二级审批")
      */
     @GetMapping(value = "/first-approval")
+    @Authorized (roles = {Role.INVENTORY_MANAGER})
     public Response firstApproval(@RequestParam("purchaseSheetId") String purchaseSheetId,
                                   @RequestParam("state") PurchaseSheetState state)  {
         if(state.equals(PurchaseSheetState.FAILURE) || state.equals(PurchaseSheetState.PENDING_LEVEL_2)) {
@@ -48,6 +52,7 @@ public class PurchaseController {
      * @param purchaseSheetId 进货单id
      * @param state 修改后的状态("审批失败"/"审批完成")
      */
+    @Authorized (roles = {Role.GM})
     @GetMapping(value = "/second-approval")
     public Response secondApproval(@RequestParam("purchaseSheetId") String purchaseSheetId,
                                    @RequestParam("state") PurchaseSheetState state)  {
