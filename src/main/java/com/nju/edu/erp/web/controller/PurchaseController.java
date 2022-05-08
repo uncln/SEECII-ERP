@@ -23,7 +23,7 @@ public class PurchaseController {
     /**
      * 销售人员制定进货单
      */
-    @Authorized (roles = {Role.FINANCIAL_STAFF, Role.FINANCIAL_MANAGER, Role.GM})
+    @Authorized (roles = {Role.FINANCIAL_STAFF, Role.SALE_MANAGER, Role.GM})
     @PostMapping(value = "/sheet-make")
     public Response makePurchaseOrder(@RequestBody PurchaseSheetVO purchaseSheetVO)  {
         purchaseService.makePurchaseSheet(purchaseSheetVO);
