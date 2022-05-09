@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nju.edu.erp.dao.WarehouseOutputSheetDao">
     <insert id="save" parameterType="WarehouseOutputSheetPO">
-        insert into warehouse_output_sheet (id, operator, create_time)
-        values (#{id},#{operator},#{createTime})
+        insert into warehouse_output_sheet (id, operator, create_time, `state`, sale_sheet_id)
+        values (#{id},#{operator},#{createTime},#{state},#{saleSheetId})
     </insert>
 
     <select id="getLatest" resultMap="WarehouseOutputSheetPO">
@@ -11,9 +11,9 @@
     </select>
 
     <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id">
-        insert into warehouse_output_sheet_content (wo_id, pid, quantity, purchase_price, remark, batch_id) values
+        insert into warehouse_output_sheet_content (wo_id, pid, quantity, sale_price, remark, batch_id) values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.woId},#{item.pid},#{item.quantity},#{item.purchasePrice},#{item.remark},#{item.batchId})
+            (#{item.woId},#{item.pid},#{item.quantity},#{item.salePrice},#{item.remark},#{item.batchId})
         </foreach>
     </insert>
 

@@ -26,6 +26,10 @@ public class SaleSheetVO {
      */
     private Integer supplier;
     /**
+     * 业务员
+     */
+    private String salesman;
+    /**
      * 操作员
      */
     private String operator;
@@ -34,13 +38,17 @@ public class SaleSheetVO {
      */
     private String remark;
     /**
-     * 总额合计, 新建单据时前端传null(在后端计算总金额
+     * 折让前总额
      */
-    private BigDecimal totalAmount;
+    private BigDecimal rawTotalAmount;
     /**
      * 单据状态, 新建单据时前端传null
      */
     private SaleSheetState state;
+    /**
+     * 折让后总额, 新建单据时前端传null
+     */
+    private BigDecimal finalAmount;
     /**
      * 折扣
      */

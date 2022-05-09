@@ -13,7 +13,35 @@
         </foreach>
     </insert>
 
+    <update id="updateSheetState">
+        update sale_sheet
+        set state = #{state}
+        where id = #{sheetId}
+    </update>
+
+    <update id="updateSheetStateOnPrev">
+        update sale_sheet
+        set state = #{state}
+        where id = #{sheetId} and state = #{prev}
+    </update>
+
     <select id="getLatestSheet" resultType="com.nju.edu.erp.model.po.SaleSheetPO">
         select * from sale_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <select id="findAllSheet" resultType="com.nju.edu.erp.model.po.SaleSheetPO">
+        select * from sale_sheet;
+    </select>
+
+    <select id="findSheetByState" resultType="com.nju.edu.erp.model.po.SaleSheetPO">
+        select * from sale_sheet where `state` = #{state};
+    </select>
+
+    <select id="findContentBySheetId" resultType="com.nju.edu.erp.model.po.SaleSheetContentPO">
+        select * from sale_sheet_content where sale_sheet_id = #{sheetId};
+    </select>
+
+    <select id="findSheetById" resultType="com.nju.edu.erp.model.po.SaleSheetPO">
+        select * from sale_sheet where id = #{id};
     </select>
 </mapper>

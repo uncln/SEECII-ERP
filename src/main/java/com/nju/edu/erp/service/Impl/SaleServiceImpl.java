@@ -3,12 +3,19 @@ package com.nju.edu.erp.service.Impl;
 import com.nju.edu.erp.dao.CustomerDao;
 import com.nju.edu.erp.dao.ProductDao;
 import com.nju.edu.erp.dao.SaleSheetDao;
+import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
 import com.nju.edu.erp.enums.sheetState.SaleSheetState;
 import com.nju.edu.erp.model.po.*;
+import com.nju.edu.erp.model.vo.ProductInfoVO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetContentVO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetVO;
 import com.nju.edu.erp.model.vo.UserVO;
+import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormContentVO;
+import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
+import com.nju.edu.erp.service.CustomerService;
+import com.nju.edu.erp.service.ProductService;
 import com.nju.edu.erp.service.SaleService;
+import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +36,20 @@ public class SaleServiceImpl implements SaleService {
 
     private final CustomerDao customerDao;
 
+    private final ProductService productService;
+
+    private final CustomerService customerService;
+
+    private final WarehouseService warehouseService;
+
     @Autowired
-    public SaleServiceImpl(SaleSheetDao saleSheetDao, ProductDao productDao, CustomerDao customerDao) {
+    public SaleServiceImpl(SaleSheetDao saleSheetDao, ProductDao productDao, CustomerDao customerDao, ProductService productService, CustomerService customerService, WarehouseService warehouseService) {
         this.saleSheetDao = saleSheetDao;
         this.productDao = productDao;
         this.customerDao = customerDao;
+        this.productService = productService;
+        this.customerService = customerService;
+        this.warehouseService = warehouseService;
     }
 
     @Override
@@ -72,5 +88,97 @@ public class SaleServiceImpl implements SaleService {
         saleSheetPO.setFinalAmount(totalAmount.multiply(saleSheetPO.getDiscount()));
         saleSheetDao.saveBatchSheetContent(saleSheetContentPOList);
         saleSheetDao.saveSheet(saleSheetPO);
+    }
+
+    @Override
+    @Transactional
+    public List<SaleSheetVO> getSaleSheetByState(SaleSheetState state) {
+        List<SaleSheetVO> res = new ArrayList<>();
+        List<SaleSheetPO> rawData;
+        if (state == null) {
+            rawData = saleSheetDao.findAllSheet();
+        }
+        else {
+            rawData = saleSheetDao.findSheetByState(state);
+        }
+        for (SaleSheetPO sheetPO : rawData) {
+            SaleSheetVO sheetVO = new SaleSheetVO();
+            BeanUtils.copyProperties(sheetPO, sheetVO);
+            List<SaleSheetContentPO> sContents = saleSheetDao.findContentBySheetId(sheetPO.getId());
+            List<SaleSheetContentVO> contentVO = new ArrayList<>();
+            for (SaleSheetContentPO sContent : sContents) {
+                SaleSheetContentVO tempVO = new SaleSheetContentVO();
+                BeanUtils.copyProperties(sContent, tempVO);
+                contentVO.add(tempVO);
+            }
+            sheetVO.setSaleSheetContent(contentVO);
+            res.add(sheetVO);
+        }
+        return res;
+    }
+
+    /**
+     * 根据销售单id进行审批(state == "待二级审批"/"审批完成"/"审批失败")
+     * 在controller层进行权限控制
+     *
+     * @param saleSheetId 进货单id
+     * @param state           销售单要达到的状态
+     */
+    @Override
+    @Transactional
+    public void approval(String saleSheetId, SaleSheetState state) {
+        if(state.equals(SaleSheetState.FAILURE)) {
+            SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
+            if(saleSheet.getState() == SaleSheetState.SUCCESS) throw new RuntimeException("状态更新失败");
+            int effectLines = saleSheetDao.updateSheetState(saleSheetId, state);
+            if(effectLines == 0) throw new RuntimeException("状态更新失败");
+        } else {
+            SaleSheetState prevState;
+            if(state.equals(SaleSheetState.SUCCESS)) {
+                prevState = SaleSheetState.PENDING_LEVEL_2;
+            } else if(state.equals(SaleSheetState.PENDING_LEVEL_2)) {
+                prevState = SaleSheetState.PENDING_LEVEL_1;
+            } else {
+                throw new RuntimeException("状态更新失败");
+            }
+            int effectLines = saleSheetDao.updateSheetStateOnPrev(saleSheetId, prevState, state);
+            if(effectLines == 0) throw new RuntimeException("状态更新失败");
+            if(state.equals(SaleSheetState.SUCCESS)) {
+                // 更新商品表的最新进价
+                // 根据saleSheetId查到对应的content -> 得到商品id和单价
+                // 根据商品id和单价更新商品最近进价recentPp
+                List<SaleSheetContentPO> saleSheetContents =  saleSheetDao.findContentBySheetId(saleSheetId);
+                List<WarehouseOutputFormContentVO> warehouseOutputFormContentVOS = new ArrayList<>();
+
+                for(SaleSheetContentPO content : saleSheetContents) {
+                    ProductInfoVO productInfoVO = new ProductInfoVO();
+                    productInfoVO.setId(content.getPid());
+                    productInfoVO.setRecentPp(content.getUnitPrice());
+
+                    productService.updateProduct(productInfoVO);
+
+                    WarehouseOutputFormContentVO woContentVO = new WarehouseOutputFormContentVO();
+                    woContentVO.setSalePrice(content.getUnitPrice());
+                    woContentVO.setQuantity(content.getQuantity());
+                    woContentVO.setRemark(content.getRemark());
+                    woContentVO.setPid(content.getPid());
+                    warehouseOutputFormContentVOS.add(woContentVO);
+                }
+                // 更新客户表(更新应付字段)
+                // 更新应付 payable
+                SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
+                CustomerPO customerPO = customerService.findCustomerById(saleSheet.getSupplier());
+                customerPO.setPayable(customerPO.getPayable().add(saleSheet.getFinalAmount().subtract(saleSheet.getVoucherAmount() == null ? BigDecimal.ZERO : saleSheet.getVoucherAmount())));
+                customerService.updateCustomer(customerPO);
+
+                // 制定出库单草稿(在这里关联销售单)
+                // 调用创建出库单的方法
+                WarehouseOutputFormVO warehouseOutputFormVO = new WarehouseOutputFormVO();
+                warehouseOutputFormVO.setOperator(null); // 暂时不填操作人(确认草稿单的时候填写)
+                warehouseOutputFormVO.setSaleSheetId(saleSheetId);
+                warehouseOutputFormVO.setList(warehouseOutputFormContentVOS);
+                warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
+            }
+        }
     }
 }

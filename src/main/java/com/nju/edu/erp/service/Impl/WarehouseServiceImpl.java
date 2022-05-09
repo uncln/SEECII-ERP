@@ -2,6 +2,7 @@ package com.nju.edu.erp.service.Impl;
 
 import com.nju.edu.erp.dao.*;
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.exception.MyServiceException;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.UserVO;
@@ -109,29 +110,35 @@ public class WarehouseServiceImpl implements WarehouseService {
         WarehouseOutputSheetPO warehouseOutputSheetPO = warehouseOutputSheetDao.getLatest();
         WarehouseOutputSheetPO toSave = new WarehouseOutputSheetPO();
         toSave.setId(generateWarehouseOutputId(warehouseOutputSheetPO == null ? null : warehouseOutputSheetPO.getId()));
-        toSave.setOperator(warehouseOutputFormVO.getOperator());
+        // toSave.setOperator(warehouseOutputFormVO.getOperator());
         toSave.setCreateTime(new Date());
+        toSave.setSaleSheetId(warehouseOutputFormVO.getSaleSheetId());
+        toSave.setState(WarehouseOutputSheetState.DRAFT);
 
         List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent = new ArrayList<>();
         warehouseOutputFormVO.getList().forEach(item -> {
             ProductPO productPO = productDao.findById(item.getPid());
-            productPO.setQuantity(productPO.getQuantity()-item.getQuantity());
-            productDao.updateById(productPO);
+//            productPO.setQuantity(productPO.getQuantity()-item.getQuantity());
+//            productDao.updateById(productPO);
+            BigDecimal salePrice = item.getSalePrice();
+            if(salePrice == null) {
+                salePrice = productPO.getRetailPrice();
+            }
 
             WarehouseOutputSheetContentPO warehouseOutputSheetContentPO = WarehouseOutputSheetContentPO.builder()
                     .woId(toSave.getId())
                     .pid(item.getPid())
                     .quantity(item.getQuantity())
-                    .purchasePrice(item.getPurchasePrice())
+                    .salePrice(salePrice)
                     .batchId(item.getBatchId())
                     .remark(item.getRemark()).build();
             warehouseOutputListPOSheetContent.add(warehouseOutputSheetContentPO);
-            WarehousePO warehousePO = WarehousePO.builder()
-                    .pid(item.getPid())
-                    .batchId(item.getBatchId())
-                    .quantity(item.getQuantity())
-                    .build();
-            warehouseDao.deductQuantity(warehousePO);
+//            WarehousePO warehousePO = WarehousePO.builder()
+//                    .pid(item.getPid())
+//                    .batchId(item.getBatchId())
+//                    .quantity(item.getQuantity())
+//                    .build();
+//            warehouseDao.deductQuantity(warehousePO);
         } );
 
         warehouseOutputSheetDao.save(toSave);
@@ -206,9 +213,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
             for (WarehouseInputSheetContentPO product : productsList) {
                 ProductPO productPO = productDao.findById(product.getPid());
-                // 更新最近进价
-                productPO.setRecentPp(product.getPurchasePrice());
-                // 更新最新零售价
+                // 更新最新数量
                 productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
                 productDao.updateById(productPO);
             }
