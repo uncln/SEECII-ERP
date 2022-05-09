@@ -168,7 +168,7 @@ public class SaleServiceImpl implements SaleService {
                 // 更新应付 payable
                 SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
                 CustomerPO customerPO = customerService.findCustomerById(saleSheet.getSupplier());
-                customerPO.setPayable(customerPO.getPayable().add(saleSheet.getFinalAmount().subtract(saleSheet.getVoucherAmount() == null ? BigDecimal.ZERO : saleSheet.getVoucherAmount())));
+                customerPO.setPayable(customerPO.getReceivable().add(saleSheet.getFinalAmount().subtract(saleSheet.getVoucherAmount() == null ? BigDecimal.ZERO : saleSheet.getVoucherAmount())));
                 customerService.updateCustomer(customerPO);
 
                 // 制定出库单草稿(在这里关联销售单)
