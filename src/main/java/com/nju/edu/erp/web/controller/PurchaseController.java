@@ -3,6 +3,7 @@ package com.nju.edu.erp.web.controller;
 import com.nju.edu.erp.auth.Authorized;
 import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 import com.nju.edu.erp.service.PurchaseService;
 import com.nju.edu.erp.web.Response;
@@ -25,8 +26,8 @@ public class PurchaseController {
      */
     @Authorized (roles = {Role.SALE_STAFF, Role.SALE_MANAGER, Role.GM})
     @PostMapping(value = "/sheet-make")
-    public Response makePurchaseOrder(@RequestBody PurchaseSheetVO purchaseSheetVO)  {
-        purchaseService.makePurchaseSheet(purchaseSheetVO);
+    public Response makePurchaseOrder(UserVO userVO, @RequestBody PurchaseSheetVO purchaseSheetVO)  {
+        purchaseService.makePurchaseSheet(userVO, purchaseSheetVO);
         return Response.buildSuccess();
     }
 

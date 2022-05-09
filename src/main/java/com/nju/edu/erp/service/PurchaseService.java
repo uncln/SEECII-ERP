@@ -1,6 +1,7 @@
 package com.nju.edu.erp.service;
 
 import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface PurchaseService {
      * 制定进货单
      * @param purchaseSheetVO 进货单
      */
-    void makePurchaseSheet(PurchaseSheetVO purchaseSheetVO);
+    void makePurchaseSheet(UserVO userVO, PurchaseSheetVO purchaseSheetVO);
 
     /**
      * 根据状态获取进货单(state == null 则获取所有进货单)

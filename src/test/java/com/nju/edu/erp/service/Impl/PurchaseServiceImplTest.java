@@ -1,7 +1,9 @@
 package com.nju.edu.erp.service.Impl;
 
 import com.nju.edu.erp.dao.PurchaseSheetDao;
+import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetContentVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 import com.nju.edu.erp.service.PurchaseService;
@@ -22,7 +24,8 @@ class PurchaseServiceImplTest {
 
     @Test
     void makePurchaseSheet() {
-        purchaseService.makePurchaseSheet(PurchaseSheetVO.builder()
+        UserVO test = new UserVO("123", Role.ADMIN,"123");
+        purchaseService.makePurchaseSheet(test,PurchaseSheetVO.builder()
                         .purchaseSheetContent(
                                 Arrays.asList(PurchaseSheetContentVO.builder().pid("0000000000400000").quantity(10).build(),
                                         PurchaseSheetContentVO.builder().pid("0000000000400001").unitPrice(BigDecimal.valueOf(2000)).quantity(20).build(),

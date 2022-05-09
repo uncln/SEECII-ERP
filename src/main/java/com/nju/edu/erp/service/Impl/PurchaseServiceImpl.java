@@ -8,6 +8,7 @@ import com.nju.edu.erp.model.po.ProductPO;
 import com.nju.edu.erp.model.po.PurchaseSheetContentPO;
 import com.nju.edu.erp.model.po.PurchaseSheetPO;
 import com.nju.edu.erp.model.vo.ProductInfoVO;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetContentVO;
 import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
@@ -57,9 +58,11 @@ public class PurchaseServiceImpl implements PurchaseService {
      */
     @Override
     @Transactional
-    public void makePurchaseSheet(PurchaseSheetVO purchaseSheetVO) {
+    public void makePurchaseSheet(UserVO userVO, PurchaseSheetVO purchaseSheetVO) {
         PurchaseSheetPO purchaseSheetPO = new PurchaseSheetPO();
         BeanUtils.copyProperties(purchaseSheetVO, purchaseSheetPO);
+        // 此处根据制定单据人员确定操作员
+        purchaseSheetPO.setOperator(userVO.getName());
         purchaseSheetPO.setCreateTime(new Date());
         PurchaseSheetPO latest = purchaseSheetDao.getLatest();
         String id = IdGenerator.generateSheetId(latest == null ? null : latest.getId(), "JHD");
