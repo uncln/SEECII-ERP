@@ -53,22 +53,22 @@ public class WarehouseController {
         return Response.buildSuccess(warehouseService.getWareProductInfo(getWareProductInfoParamsVO));
     }
 
-    @GetMapping("/inputSheet/pending")
-    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER})
-    public Response warehouseInputSheetPending(UserVO user,
-                                               @RequestParam(value = "sheetId") String sheetId,
-                                               @RequestParam(value = "state") WarehouseInputSheetState state) {
-        if (state.equals(WarehouseInputSheetState.PENDING)) {
-            warehouseService.approval(user, sheetId, state);
-        }
-        else {
-            throw new MyServiceException("C00001", "越权访问！");
-        }
-        return Response.buildSuccess();
-    }
+//    @GetMapping("/inputSheet/pending")
+//    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER})
+//    public Response warehouseInputSheetPending(UserVO user,
+//                                               @RequestParam(value = "sheetId") String sheetId,
+//                                               @RequestParam(value = "state") WarehouseInputSheetState state) {
+//        if (state.equals(WarehouseInputSheetState.PENDING)) {
+//            warehouseService.approval(user, sheetId, state);
+//        }
+//        else {
+//            throw new MyServiceException("C00001", "越权访问！");
+//        }
+//        return Response.buildSuccess();
+//    }
 
     @GetMapping("/inputSheet/approve")
-    @Authorized(roles = {Role.ADMIN, Role.GM})
+    @Authorized(roles = {Role.ADMIN, Role.GM, Role.INVENTORY_MANAGER})
     public Response warehouseInputSheetApprove(UserVO user,
                                                @RequestParam(value = "sheetId") String sheetId,
                                                @RequestParam(value = "state") WarehouseInputSheetState state) {

@@ -199,26 +199,27 @@ public class WarehouseServiceImpl implements WarehouseService {
     public void approval(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
         // TODO
         // 也许要加一个修改草稿的接口 此处只是审批通过并修改操作员
-        if (state.equals(WarehouseInputSheetState.PENDING)) {
-            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
-            warehouseInputSheetPO.setOperator(user.getName());
-            warehouseInputSheetPO.setState(state);
-            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
+        WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
+        warehouseInputSheetPO.setState(state);
+        warehouseInputSheetDao.updateById(warehouseInputSheetPO);
+        // 获取对应的商品 更新仓库相关数据
+        List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
+        List<WarehousePO> warehousePOList = new ArrayList<>();
+        for (WarehouseInputSheetContentPO product : productsList) {
+            ProductPO productPO = productDao.findById(product.getPid());
+            // 更新最新数量
+            productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
+            productDao.updateById(productPO);
+            // 更新库存信息
+            WarehousePO warehousePO = WarehousePO.builder()
+                    .pid(product.getPid())
+                    .quantity(product.getQuantity())
+                    .purchasePrice(product.getPurchasePrice())
+                    .batchId(warehouseInputSheetPO.getBatchId())
+                    .productionDate(product.getProductionDate()).build();
+            warehousePOList.add(warehousePO);
         }
-        else {
-            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
-            warehouseInputSheetPO.setState(state);
-            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
-            // 获取对应的商品 更新仓库相关数据
-            List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
-            for (WarehouseInputSheetContentPO product : productsList) {
-                ProductPO productPO = productDao.findById(product.getPid());
-                // 更新最新数量
-                productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
-                productDao.updateById(productPO);
-            }
-
-        }
+        warehouseDao.saveBatch(warehousePOList);
     }
 
     /**
