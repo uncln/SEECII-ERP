@@ -6,8 +6,29 @@
         values (#{id},#{operator},#{createTime},#{state},#{saleSheetId})
     </insert>
 
+    <update id="updateById">
+        update warehouse_output_sheet set operator = #{operator},
+                                         sale_sheet_id = #{saleSheetId}, `state` = #{state} where id = #{id};
+    </update>
+
     <select id="getLatest" resultMap="WarehouseOutputSheetPO">
         select * from warehouse_output_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <select id="getAllSheets" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet;
+    </select>
+
+    <select id="getDraftSheets" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet where `state` = #{state};
+    </select>
+
+    <select id="getSheet" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet where id = #{sheetId};
+    </select>
+
+    <select id="getAllContentById" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetContentPO">
+        select * from warehouse_output_sheet_content where id = #{sheetId};
     </select>
 
     <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id">

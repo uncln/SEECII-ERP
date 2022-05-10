@@ -196,7 +196,7 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @param state                 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
      */
     @Override
-    public void approval(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
+    public void approvalInputSheet(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
         // TODO
         // 也许要加一个修改草稿的接口 此处只是审批通过并修改操作员
         WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
@@ -235,6 +235,39 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         else {
             return warehouseInputSheetDao.getDraftSheets(state);
+        }
+    }
+
+    @Override
+    public List<WarehouseOutputSheetPO> getWareHouseOutSheetByState(WarehouseOutputSheetState state) {
+        if (state == null) {
+            return warehouseOutputSheetDao.getAllSheets();
+        }
+        else {
+            return warehouseOutputSheetDao.getDraftSheets(state);
+        }
+    }
+
+    /**
+     * 确认出库单
+     * @param user
+     * @param sheetId 入库单id
+     * @param state 入库单修改后的状态(state == "审批失败"/"审批完成")
+     */
+    @Override
+    public void approvalOutputSheet(UserVO user, String sheetId, WarehouseOutputSheetState state) {
+        WarehouseOutputSheetPO warehouseOutputSheetPO = warehouseOutputSheetDao.getSheet(sheetId);
+        warehouseOutputSheetPO.setState(state);
+        warehouseOutputSheetDao.updateById(warehouseOutputSheetPO);
+        // 获取对应的商品 更新仓库相关数据
+        List<WarehouseOutputSheetContentPO> productsList = warehouseOutputSheetDao.getAllContentById(sheetId);
+        for (WarehouseOutputSheetContentPO product : productsList) {
+            ProductPO productPO = productDao.findById(product.getPid());
+            // 更新最新数量
+            productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
+            productDao.updateById(productPO);
+            // 更新库存信息
+            // ?如何出货
         }
     }
 

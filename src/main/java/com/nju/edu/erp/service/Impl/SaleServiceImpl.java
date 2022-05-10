@@ -162,6 +162,7 @@ public class SaleServiceImpl implements SaleService {
                     woContentVO.setRemark(content.getRemark());
                     woContentVO.setPid(content.getPid());
                     warehouseOutputFormContentVOS.add(woContentVO);
+
                 }
                 // 更新客户表(更新应付字段)
                 // 更新应付 payable

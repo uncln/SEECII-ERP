@@ -1,5 +1,6 @@
 package com.nju.edu.erp.dao;
 
+import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.model.po.WarehouseOutputSheetContentPO;
 import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,4 +29,37 @@ public interface WarehouseOutputSheetDao {
      * @param warehouseOutputListPOSheetContent 出库单上的具体内容
      */
     void saveBatch(List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent);
+
+    /**
+     * 获取所有出库单记录
+     * @return
+     */
+    List<WarehouseOutputSheetPO> getAllSheets();
+
+    /**
+     * 获取指定状态的出库单记录
+     * @param state
+     * @return
+     */
+    List<WarehouseOutputSheetPO> getDraftSheets(WarehouseOutputSheetState state);
+
+    /**
+     * 根据id获取单据
+     * @param sheetId
+     * @return
+     */
+    WarehouseOutputSheetPO getSheet(String sheetId);
+
+    /**
+     * 更新PO
+     * @param warehouseOutputSheetPO
+     */
+    void updateById(WarehouseOutputSheetPO warehouseOutputSheetPO);
+
+    /**
+     * 获取出库单具体内容
+     * @param sheetId
+     * @return
+     */
+    List<WarehouseOutputSheetContentPO> getAllContentById(String sheetId);
 }

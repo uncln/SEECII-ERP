@@ -1,8 +1,10 @@
 package com.nju.edu.erp.service;
 
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.model.po.PurchaseSheetPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
+import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
@@ -36,7 +38,7 @@ public interface WarehouseService {
      * @param warehouseInputSheetId 入库单id
      * @param state 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
      */
-    void approval(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state);
+    void approvalInputSheet(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state);
 
     /**
      * 通过状态获取入库单(state == null 时获取全部入库单)
@@ -44,4 +46,18 @@ public interface WarehouseService {
      * @return 入库单
      */
     List<WarehouseInputSheetPO> getWareHouseInputSheetByState(WarehouseInputSheetState state);
+
+    /**
+     * 通过状态获取出库单(state == null 时获取全部出库单)
+     * @param state 出库单状态
+     * @return 出库单
+     */
+    List<WarehouseOutputSheetPO> getWareHouseOutSheetByState(WarehouseOutputSheetState state);
+
+    /**
+     * 审批出库单(仓库管理员进行确认)
+     * @param sheetId 入库单id
+     * @param state 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
+     */
+    void approvalOutputSheet(UserVO user, String sheetId, WarehouseOutputSheetState state);
 }
