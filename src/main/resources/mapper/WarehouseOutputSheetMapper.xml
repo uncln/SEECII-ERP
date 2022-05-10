@@ -10,6 +10,9 @@
         update warehouse_output_sheet set operator = #{operator},
                                          sale_sheet_id = #{saleSheetId}, `state` = #{state} where id = #{id};
     </update>
+    <delete id="deleteContent">
+        delete from warehouse_output_sheet_content where wo_id = #{sheetId} ;
+    </delete>
 
     <select id="getLatest" resultMap="WarehouseOutputSheetPO">
         select * from warehouse_output_sheet order by id desc limit 0,1 ;
@@ -28,7 +31,7 @@
     </select>
 
     <select id="getAllContentById" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetContentPO">
-        select * from warehouse_output_sheet_content where id = #{sheetId};
+        select * from warehouse_output_sheet_content where wo_id = #{sheetId};
     </select>
 
     <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id">

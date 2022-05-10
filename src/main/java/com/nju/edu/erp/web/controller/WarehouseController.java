@@ -5,7 +5,9 @@ import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.exception.MyServiceException;
+import com.nju.edu.erp.model.po.WarehouseInputSheetContentPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
+import com.nju.edu.erp.model.po.WarehouseOutputSheetContentPO;
 import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
@@ -94,6 +96,20 @@ public class WarehouseController {
     @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER, Role.GM})
     public Response getWarehouseOutSheet(@RequestParam(value = "state", required = false) WarehouseOutputSheetState state) {
         List<WarehouseOutputSheetPO> ans = warehouseService.getWareHouseOutSheetByState(state);
+        return Response.buildSuccess(ans);
+    }
+
+    @GetMapping("/inputSheet/content")
+    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER, Role.GM})
+    public Response getWarehouseInputSheetContent(@RequestParam(value = "sheetId") String sheetId) {
+        List<WarehouseInputSheetContentPO> ans = warehouseService.getWHISheetContentById(sheetId);
+        return Response.buildSuccess(ans);
+    }
+
+    @GetMapping("/outputSheet/content")
+    @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER, Role.GM})
+    public Response getWarehouseOutputSheetContent(@RequestParam(value = "sheetId") String sheetId) {
+        List<WarehouseOutputSheetContentPO> ans = warehouseService.getWHOSheetContentById(sheetId);
         return Response.buildSuccess(ans);
     }
 

@@ -2,9 +2,7 @@ package com.nju.edu.erp.service;
 
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
-import com.nju.edu.erp.model.po.PurchaseSheetPO;
-import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
-import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
+import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
@@ -60,4 +58,18 @@ public interface WarehouseService {
      * @param state 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
      */
     void approvalOutputSheet(UserVO user, String sheetId, WarehouseOutputSheetState state);
+
+    /**
+     * 根据单据id获取具体内容
+     * @param sheetId
+     * @return
+     */
+    List<WarehouseInputSheetContentPO> getWHISheetContentById(String sheetId);
+
+    /**
+     * 根据单据id获取具体内容
+     * @param sheetId
+     * @return
+     */
+    List<WarehouseOutputSheetContentPO> getWHOSheetContentById(String sheetId);
 }
