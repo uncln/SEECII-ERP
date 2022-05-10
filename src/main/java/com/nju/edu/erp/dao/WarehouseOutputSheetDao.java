@@ -62,4 +62,10 @@ public interface WarehouseOutputSheetDao {
      * @return
      */
     List<WarehouseOutputSheetContentPO> getAllContentById(String sheetId);
+
+    /**
+     * 删除无批次的初始内容
+     * @param sheetId
+     */
+    void deleteContent(String sheetId);
 }

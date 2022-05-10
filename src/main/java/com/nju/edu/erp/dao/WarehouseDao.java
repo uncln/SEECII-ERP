@@ -14,4 +14,11 @@ public interface WarehouseDao {
     void deductQuantity(WarehousePO warehousePO);
 
     List<WarehousePO> findAllNotZeroByPidSortedByBatchId(String pid);
+
+    /**
+     * 按照商品id获取现存商品（存量>0）并按价格排序
+     * @param pid
+     * @return
+     */
+    List<WarehousePO> findByPidOrderByPurchasePricePos(String pid);
 }
