@@ -14,4 +14,6 @@ public interface WarehouseDao {
     void deductQuantity(WarehousePO warehousePO);
 
     List<WarehousePO> findAllNotZeroByPidSortedByBatchId(String pid);
+
+    WarehousePO findOneByPidAndBatchId(String pid, Integer batchId);
 }

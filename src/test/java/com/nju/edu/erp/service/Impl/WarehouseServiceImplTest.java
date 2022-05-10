@@ -1,5 +1,7 @@
 package com.nju.edu.erp.service.Impl;
 
+import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.service.WarehouseService;
@@ -30,5 +32,11 @@ class WarehouseServiceImplTest {
         warehouseInputFormContentVOS.add(warehouseInputFormContentVO3);
         warehouseInputFormVO.setList(warehouseInputFormContentVOS);
 //        warehouseService.productWarehousing(warehouseInputFormVO);
+    }
+
+    @Test
+    void approvalInputSheet() {
+        warehouseService.approvalInputSheet(UserVO.builder().name("sky").build(),"RKD-20220504-00000", WarehouseInputSheetState.PENDING);
+        warehouseService.approvalInputSheet(UserVO.builder().name("sky").build(),"RKD-20220504-00000", WarehouseInputSheetState.SUCCESS);
     }
 }

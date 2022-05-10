@@ -15,6 +15,9 @@
     <select id="findAllNotZeroByPidSortedByBatchId" resultType="com.nju.edu.erp.model.po.WarehousePO">
         select * from warehouse where pid = #{pid} and quantity > 0 order by batch_id asc;
     </select>
+    <select id="findOneByPidAndBatchId" resultType="com.nju.edu.erp.model.po.WarehousePO">
+        select * from warehouse where pid=#{pid} and batch_id=#{batchId}
+    </select>
 
     <resultMap id="WarehousePO" type="com.nju.edu.erp.model.po.WarehousePO">
         <id column="id" property="id"></id>
