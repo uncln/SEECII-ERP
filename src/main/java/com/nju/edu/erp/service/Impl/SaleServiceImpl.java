@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -180,5 +183,28 @@ public class SaleServiceImpl implements SaleService {
                 warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
             }
         }
+    }
+
+    /**
+     * 获取某个销售人员某段时间内消费总金额最大的客户(不考虑退货情况,销售单不需要审批通过,如果这样的客户有多个，仅保留一个)
+     * @param salesman 销售人员的名字
+     * @param beginDateStr 开始时间字符串
+     * @param endDateStr 结束时间字符串
+     * @return
+     */
+    public CustomerPurchaseAmountPO getMaxAmountCustomerOfSalesmanByTime(String salesman,String beginDateStr,String endDateStr){
+        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try{
+            Date beginTime =dateFormat.parse(beginDateStr);
+            Date endTime=dateFormat.parse(endDateStr);
+            if(beginTime.compareTo(endTime)>0){
+                return null;
+            }else{
+                return saleSheetDao.getMaxAmountCustomerOfSalesmanByTime(salesman,beginTime,endTime);
+            }
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
