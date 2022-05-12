@@ -64,7 +64,14 @@ public interface WarehouseService {
      * @param endDateStr
      * @return
      */
-    public int getWarehouseInputProductQuantityByTime(String beginDateStr,String endDateStr);
+    int getWarehouseInputProductQuantityByTime(String beginDateStr,String endDateStr);
 
+    /**
+     * 库存查看：一个时间段内的出库数量合计
+     * @param beginDateStr
+     * @param endDateStr
+     * @return
+     */
+    int getWarehouseOutProductQuantityByTime(String beginDateStr,String endDateStr);
 
 }

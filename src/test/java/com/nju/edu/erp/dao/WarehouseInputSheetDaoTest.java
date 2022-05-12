@@ -57,6 +57,10 @@ class WarehouseInputSheetDaoTest {
         System.out.println(list);
     }
 
+    /**
+     * 库存查看：查询指定时间段内出/入库数量/金额/商品信息/分类信息
+     * @throws ParseException
+     */
     @Test
     void getWarehouseIODetailByTime() throws ParseException {
         DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -66,6 +70,10 @@ class WarehouseInputSheetDaoTest {
         System.out.println(list);
     }
 
+    /**
+     * 库存查看:一个时间段内的入库数量合计
+     * @throws ParseException
+     */
     @Test
     void getWarehouseInputProductQuantityByTime() throws ParseException {
         DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

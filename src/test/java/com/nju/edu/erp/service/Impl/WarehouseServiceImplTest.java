@@ -53,5 +53,16 @@ class WarehouseServiceImplTest {
     @Test
     void testGetWarehouseInputProductQuantityByTime(){
         int quantity= warehouseService.getWarehouseInputProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+        System.out.println(quantity);
     }
+
+    /**
+     * 库存查看：一个时间段内的出库数量合计
+     */
+    @Test
+    void testGetWarehouseOutputProductQuantityByTime(){
+        int quantity= warehouseService.getWarehouseOutProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+        System.out.println(quantity);
+    }
+
 }

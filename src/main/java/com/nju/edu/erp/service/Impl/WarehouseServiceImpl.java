@@ -311,4 +311,26 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         return 0;
     }
+
+    /**
+     * 库存查看：一个时间段内的出库数量合计
+     * @param beginDateStr
+     * @param endDateStr
+     * @return
+     */
+    public int getWarehouseOutProductQuantityByTime(String beginDateStr,String endDateStr){
+        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try{
+            Date beginTime =dateFormat.parse(beginDateStr);
+            Date endTime=dateFormat.parse(endDateStr);
+            if(beginTime.compareTo(endTime)>0){
+                return 0;
+            }else{
+                return warehouseOutputSheetDao.getWarehouseOutputProductQuantityByTime(beginTime,endTime);
+            }
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

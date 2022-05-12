@@ -5,6 +5,7 @@ import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -28,4 +29,6 @@ public interface WarehouseOutputSheetDao {
      * @param warehouseOutputListPOSheetContent 出库单上的具体内容
      */
     void saveBatch(List<WarehouseOutputSheetContentPO> warehouseOutputListPOSheetContent);
+
+    int getWarehouseOutputProductQuantityByTime(Date beginTime,Date endTime);
 }

@@ -17,6 +17,13 @@
         </foreach>
     </insert>
 
+    <!--库存查看:一个时间段内的出库数量合计-->
+    <select id="getWarehouseOutputProductQuantityByTime" resultType="int">
+        select sum(sc.quantity)
+        from sale_sheet s,sale_sheet_content sc
+        where s.state='审批完成' and s.id=sc.sale_sheet_id and s.create_time>=#{beginTime} and s.create_time &lt;= #{endTime};
+    </select>
+
     <resultMap id="WarehouseOutputSheetPO" type="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
         <id column="id" property="id"></id>
         <result column="operator" property="operator"></result>

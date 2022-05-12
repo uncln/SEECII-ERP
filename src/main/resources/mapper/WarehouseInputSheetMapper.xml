@@ -39,6 +39,7 @@
         select * from warehouse_input_sheet_content where wi_id = #{warehouseInputSheetId} ;
     </select>
 
+<!--库存查看：查询指定时间段内出/入库数量/金额/商品信息/分类信息-->
     <select id="getWarehouseIODetailByTime" resultType="com.nju.edu.erp.model.po.WarehouseIODetailPO">
         (select "warehouse_input"as type, p.id as sheet_id,pr.name as product_name, c.name as category_name,pc.quantity as quantity,pc.unit_price as unit_price,pc.total_price as total_price,p.create_time as create_time from
         purchase_sheet p,purchase_sheet_content pc,product pr,category c
@@ -52,6 +53,7 @@
         order by create_time;
     </select>
 
+<!--库存查看:一个时间段内的入库数量合计-->
     <select id="getWarehouseInputProductQuantityByTime" resultType="int">
         select sum(pc.quantity)
         from purchase_sheet p,purchase_sheet_content pc
