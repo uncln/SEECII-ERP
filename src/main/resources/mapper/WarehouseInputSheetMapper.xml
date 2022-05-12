@@ -7,8 +7,8 @@
     </insert>
 
     <update id="updateById">
-        update warehouse_input_sheet set id = #{id}, batch_id = #{batchId}, operator = #{operator}, create_time = #{createTime},
-                                         purchase_sheet_id = #{purchaseSheetId}, `state` = #{state} ;
+        update warehouse_input_sheet set batch_id = #{batchId}, operator = #{operator}, create_time = #{createTime},
+                                         purchase_sheet_id = #{purchaseSheetId}, `state` = #{state} where id = #{id};
     </update>
 
 

@@ -1,6 +1,11 @@
 package com.nju.edu.erp.service.Impl;
 
+<<<<<<< HEAD
 import com.nju.edu.erp.model.po.WarehouseIODetailPO;
+=======
+import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.model.vo.UserVO;
+>>>>>>> e3ab0731864b32cf8d430aaf9c03e0517d9a0805
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.service.WarehouseService;
@@ -37,9 +42,15 @@ class WarehouseServiceImplTest {
     }
 
     @Test
+<<<<<<< HEAD
     void testGetWarehouseIODetailByTime() throws ParseException {
 
         List<WarehouseIODetailPO> list=warehouseService.getWarehouseIODetailByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
         System.out.println(list);
+=======
+    void approvalInputSheet() {
+        warehouseService.approvalInputSheet(UserVO.builder().name("sky").build(),"RKD-20220504-00000", WarehouseInputSheetState.PENDING);
+        warehouseService.approvalInputSheet(UserVO.builder().name("sky").build(),"RKD-20220504-00000", WarehouseInputSheetState.SUCCESS);
+>>>>>>> e3ab0731864b32cf8d430aaf9c03e0517d9a0805
     }
 }
