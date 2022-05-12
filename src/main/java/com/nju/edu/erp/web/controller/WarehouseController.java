@@ -102,4 +102,17 @@ public class WarehouseController {
         List<WarehouseIODetailPO> ans=warehouseService.getWarehouseIODetailByTime(beginDateStr,endDateStr);
         return Response.buildSuccess(ans);
     }
+
+    /**
+     *库存查看：一个时间段内的入库数量合计
+     * @param beginDateStr 格式：“yyyy-MM-dd HH:mm:ss”，如“2022-05-12 11:38:30”
+     * @param endDateStr   格式：“yyyy-MM-dd HH:mm:ss”，如“2022-05-12 11:38:30”
+     * @return
+     */
+    @GetMapping("/inputSheet/time/quantity")
+    @Authorized(roles = {Role.ADMIN,Role.INVENTORY_MANAGER})
+    public Response getWarehouseInputProductQuantityByTime(@RequestParam String beginDateStr,@RequestParam String endDateStr) throws ParseException{
+        int quantity= warehouseService.getWarehouseInputProductQuantityByTime(beginDateStr,endDateStr);
+        return Response.buildSuccess(quantity);
+    }
 }

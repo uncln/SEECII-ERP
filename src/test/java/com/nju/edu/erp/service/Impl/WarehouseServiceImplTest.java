@@ -36,10 +36,22 @@ class WarehouseServiceImplTest {
 //        warehouseService.productWarehousing(warehouseInputFormVO);
     }
 
+    /**
+     * 库存查看：设定一个时间段，查看此时间段内的出/入库数量/金额/商品信息/分类信息
+     * @throws ParseException
+     */
     @Test
     void testGetWarehouseIODetailByTime() throws ParseException {
 
         List<WarehouseIODetailPO> list=warehouseService.getWarehouseIODetailByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
         System.out.println(list);
+    }
+
+    /**
+     * 库存查看：一个时间段内的入库数量合计
+     */
+    @Test
+    void testGetWarehouseInputProductQuantityByTime(){
+        int quantity= warehouseService.getWarehouseInputProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
     }
 }

@@ -67,4 +67,6 @@ public interface WarehouseInputSheetDao {
      * @param endTime
      */
     List<WarehouseIODetailPO> getWarehouseIODetailByTime(Date beginTime,Date endTime);
+
+    int getWarehouseInputProductQuantityByTime(Date beginTime,Date endTime);
 }

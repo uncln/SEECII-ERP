@@ -48,6 +48,23 @@ public interface WarehouseService {
      */
     List<WarehouseInputSheetPO> getWareHouseInputSheetByState(WarehouseInputSheetState state);
 
+    /**
+     * 库存查看：设定一个时间段，查看此时间段内的出/入库数量/金额/商品信息/分类信息
+     * @param beginDateStr 开始时间字符串
+     * @param endDateStr 结束时间字符串
+     * @return
+     * @throws ParseException
+     */
     List<WarehouseIODetailPO> getWarehouseIODetailByTime(String beginDateStr,String endDateStr) throws ParseException;
+
+
+    /**
+     * 库存查看：一个时间段内的入库数量合计
+     * @param beginDateStr
+     * @param endDateStr
+     * @return
+     */
+    public int getWarehouseInputProductQuantityByTime(String beginDateStr,String endDateStr);
+
 
 }

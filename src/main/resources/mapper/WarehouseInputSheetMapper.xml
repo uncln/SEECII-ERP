@@ -52,6 +52,12 @@
         order by create_time;
     </select>
 
+    <select id="getWarehouseInputProductQuantityByTime" resultType="int">
+        select sum(pc.quantity)
+        from purchase_sheet p,purchase_sheet_content pc
+        where p.state='审批完成' and p.id=pc.purchase_sheet_id and p.create_time>=#{beginTime} and p.create_time &lt;= #{endTime};
+    </select>
+
     <resultMap id="WarehouseInputSheetPO" type="com.nju.edu.erp.model.po.WarehouseInputSheetPO">
         <id column="id" property="id"></id>
         <result column="batch_id" property="batchId"></result>
