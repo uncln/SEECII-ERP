@@ -2,6 +2,7 @@ package com.nju.edu.erp.service;
 
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.model.po.PurchaseSheetPO;
+import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
@@ -9,6 +10,8 @@ import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOneProductInfoVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 public interface WarehouseService {
@@ -44,4 +47,7 @@ public interface WarehouseService {
      * @return 入库单
      */
     List<WarehouseInputSheetPO> getWareHouseInputSheetByState(WarehouseInputSheetState state);
+
+    List<WarehouseIODetailPO> getWarehouseIODetailByTime(String beginDateStr,String endDateStr) throws ParseException;
+
 }

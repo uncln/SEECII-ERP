@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -263,5 +265,22 @@ public class WarehouseServiceImpl implements WarehouseService {
         } else {
             return "RKD-" + today + "-" + String.format("%05d", 0);
         }
+    }
+
+    @Override
+    public List<WarehouseIODetailPO> getWarehouseIODetailByTime(String beginDateStr,String endDateStr) {
+        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try{
+            Date beginTime =dateFormat.parse(beginDateStr);
+            Date endTime=dateFormat.parse(endDateStr);
+            if(beginTime.compareTo(endTime)>0){
+                return null;
+            }else{
+                return warehouseInputSheetDao.getWarehouseIODetailByTime(beginTime,endTime);
+            }
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

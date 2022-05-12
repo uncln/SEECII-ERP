@@ -39,6 +39,19 @@
         select * from warehouse_input_sheet_content where wi_id = #{warehouseInputSheetId} ;
     </select>
 
+    <select id="getWarehouseIODetailByTime" resultType="com.nju.edu.erp.model.po.WarehouseIODetailPO">
+        (select "warehouse_input"as type, p.id as sheet_id,pr.name as product_name, c.name as category_name,pc.quantity as quantity,pc.unit_price as unit_price,pc.total_price as total_price,p.create_time as create_time from
+        purchase_sheet p,purchase_sheet_content pc,product pr,category c
+        where p.state='审批完成' and p.id=pc.purchase_sheet_id and pc.pid=pr.id and pr.category_id=c.id and p.create_time>=
+        #{beginTime} and p.create_time &lt;= #{endTime})
+        union all
+        (select "warehouse_output" as type,s.id as sheet_id,pr.name as product_name, c.name as category_name,sc.quantity as quantity,sc.unit_price as unit_price,sc.total_price as total_price, s.create_time as create_time from
+        sale_sheet s,sale_sheet_content sc,product pr,category c
+        where s.state='审批完成' and s.id=sc.sale_sheet_id and sc.pid=pr.id and pr.category_id=c.id and s.create_time>=#{beginTime} and
+        s.create_time &lt;=#{endTime})
+        order by create_time;
+    </select>
+
     <resultMap id="WarehouseInputSheetPO" type="com.nju.edu.erp.model.po.WarehouseInputSheetPO">
         <id column="id" property="id"></id>
         <result column="batch_id" property="batchId"></result>
@@ -46,6 +59,17 @@
         <result column="create_time" property="createTime"></result>
         <result column="purchase_sheet_id" property="purchaseSheetId"></result>
         <result column="state" property="state"></result>
+    </resultMap>
+
+    <resultMap id="WarehouseIODetailPO" type="com.nju.edu.erp.model.po.WarehouseIODetailPO">
+        <result column="type" property="type"></result>
+        <result column="sheet_id" property="sheetId"></result>
+        <result column="product_name" property="productName"></result>
+        <result column="category_name" property="categoryName"></result>
+        <result column="quantity" property="quantity"></result>
+        <result column="unit_price" property="unitPrice"></result>
+        <result column="total_price" property="totalPrice"></result>
+        <result column="create_time" property="createTime"></result>
     </resultMap>
 
 </mapper>

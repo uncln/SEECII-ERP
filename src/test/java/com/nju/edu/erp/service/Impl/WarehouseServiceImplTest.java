@@ -1,5 +1,6 @@
 package com.nju.edu.erp.service.Impl;
 
+import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormContentVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
 import com.nju.edu.erp.service.WarehouseService;
@@ -7,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,5 +34,12 @@ class WarehouseServiceImplTest {
         warehouseInputFormContentVOS.add(warehouseInputFormContentVO3);
         warehouseInputFormVO.setList(warehouseInputFormContentVOS);
 //        warehouseService.productWarehousing(warehouseInputFormVO);
+    }
+
+    @Test
+    void testGetWarehouseIODetailByTime() throws ParseException {
+
+        List<WarehouseIODetailPO> list=warehouseService.getWarehouseIODetailByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+        System.out.println(list);
     }
 }

@@ -1,11 +1,13 @@
 package com.nju.edu.erp.dao;
 
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
+import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetContentPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -58,4 +60,11 @@ public interface WarehouseInputSheetDao {
      * @param warehouseInputSheetId
      */
     List<WarehouseInputSheetContentPO> getAllContentById(String warehouseInputSheetId);
+
+    /**
+     * 查询指定时间段内出/入库数量/金额/商品信息/分类信息
+     * @param beginTime
+     * @param endTime
+     */
+    List<WarehouseIODetailPO> getWarehouseIODetailByTime(Date beginTime,Date endTime);
 }

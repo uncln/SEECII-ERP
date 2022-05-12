@@ -4,6 +4,7 @@ import com.nju.edu.erp.auth.Authorized;
 import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.exception.MyServiceException;
+import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.po.WarehouseInputSheetPO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Slf4j
@@ -85,6 +87,19 @@ public class WarehouseController {
     @Authorized(roles = {Role.ADMIN, Role.INVENTORY_MANAGER})
     public Response getWarehouseInputSheet(@RequestParam(value = "state", required = false) WarehouseInputSheetState state) {
         List<WarehouseInputSheetPO> ans = warehouseService.getWareHouseInputSheetByState(state);
+        return Response.buildSuccess(ans);
+    }
+
+    /**
+     *库存查看：查询指定时间段内出/入库数量/金额/商品信息/分类信息
+     * @param beginDateStr 格式：“yyyy-MM-dd HH:mm:ss”，如“2022-05-12 11:38:30”
+     * @param endDateStr   格式：“yyyy-MM-dd HH:mm:ss”，如“2022-05-12 11:38:30”
+     * @return
+     */
+    @GetMapping("/sheetContent/time")
+    @Authorized(roles = {Role.ADMIN,Role.INVENTORY_MANAGER})
+    public Response getWarehouseIODetailByTime(@RequestParam String beginDateStr,@RequestParam String endDateStr) throws ParseException {
+        List<WarehouseIODetailPO> ans=warehouseService.getWarehouseIODetailByTime(beginDateStr,endDateStr);
         return Response.buildSuccess(ans);
     }
 }
