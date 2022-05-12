@@ -13,7 +13,7 @@ import java.util.List;
 public interface PurchaseSheetDao {
     /**
      * 获取最近一条进货单
-     * @return 最近一条进货单
+     * @return 最近一条入库单
      */
     PurchaseSheetPO getLatest();
 
@@ -26,7 +26,7 @@ public interface PurchaseSheetDao {
 
     /**
      * 把进货单上的具体内容存入数据库
-     * @param purchaseSheetContent 进货单上的具体内容
+     * @param purchaseSheetContent 入进货单上的具体内容
      */
     void saveBatch(List<PurchaseSheetContentPO> purchaseSheetContent);
 

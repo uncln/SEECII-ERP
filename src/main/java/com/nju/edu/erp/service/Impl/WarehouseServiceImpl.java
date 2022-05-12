@@ -9,7 +9,6 @@ import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.*;
 import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,7 +157,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    @Transactional
     public List<WarehouseOneProductInfoVO> getWareProductInfo(GetWareProductInfoParamsVO params) {
         /**
          * 这是商品出库的前驱步骤 ——
@@ -200,32 +198,29 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @param state                 入库单修改后的状态(state == "待审批"/"审批失败"/"审批完成")
      */
     @Override
-    @Transactional
-    public void approvalInputSheet(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
+    public void approval(UserVO user, String warehouseInputSheetId, WarehouseInputSheetState state) {
         // TODO
         // 也许要加一个修改草稿的接口 此处只是审批通过并修改操作员
-        WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
-        warehouseInputSheetPO.setOperator(user.getName());
-        warehouseInputSheetPO.setState(state);
-        warehouseInputSheetDao.updateById(warehouseInputSheetPO);
-        // 获取对应的商品 更新仓库相关数据
-        List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
-        List<WarehousePO> warehousePOList = new ArrayList<>();
-        for (WarehouseInputSheetContentPO product : productsList) {
-            ProductPO productPO = productDao.findById(product.getPid());
-            // 更新最新数量
-            productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
-            productDao.updateById(productPO);
-            // 更新库存信息
-            WarehousePO warehousePO = WarehousePO.builder()
-                    .pid(product.getPid())
-                    .quantity(product.getQuantity())
-                    .purchasePrice(product.getPurchasePrice())
-                    .batchId(warehouseInputSheetPO.getBatchId())
-                    .productionDate(product.getProductionDate()).build();
-            warehousePOList.add(warehousePO);
+        if (state.equals(WarehouseInputSheetState.PENDING)) {
+            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
+            warehouseInputSheetPO.setOperator(user.getName());
+            warehouseInputSheetPO.setState(state);
+            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
         }
-        warehouseDao.saveBatch(warehousePOList);
+        else {
+            WarehouseInputSheetPO warehouseInputSheetPO = warehouseInputSheetDao.getSheet(warehouseInputSheetId);
+            warehouseInputSheetPO.setState(state);
+            warehouseInputSheetDao.updateById(warehouseInputSheetPO);
+            // 获取对应的商品 更新仓库相关数据
+            List<WarehouseInputSheetContentPO> productsList = warehouseInputSheetDao.getAllContentById(warehouseInputSheetId);
+            for (WarehouseInputSheetContentPO product : productsList) {
+                ProductPO productPO = productDao.findById(product.getPid());
+                // 更新最新数量
+                productPO.setQuantity(productPO.getQuantity() + product.getQuantity());
+                productDao.updateById(productPO);
+            }
+
+        }
     }
 
     /**
@@ -242,75 +237,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         else {
             return warehouseInputSheetDao.getDraftSheets(state);
         }
-    }
-
-    @Override
-    public List<WarehouseOutputSheetPO> getWareHouseOutSheetByState(WarehouseOutputSheetState state) {
-        if (state == null) {
-            return warehouseOutputSheetDao.getAllSheets();
-        }
-        else {
-            return warehouseOutputSheetDao.getDraftSheets(state);
-        }
-    }
-
-    /**
-     * 确认出库单
-     * @param user
-     * @param sheetId 入库单id
-     * @param state 入库单修改后的状态(state == "审批失败"/"审批完成")
-     */
-    @Override
-    @Transactional
-    public void approvalOutputSheet(UserVO user, String sheetId, WarehouseOutputSheetState state) {
-        WarehouseOutputSheetPO warehouseOutputSheetPO = warehouseOutputSheetDao.getSheet(sheetId);
-        warehouseOutputSheetPO.setOperator(user.getName());
-        warehouseOutputSheetPO.setState(state);
-        warehouseOutputSheetDao.updateById(warehouseOutputSheetPO);
-        // 获取对应的商品 更新仓库相关数据
-        List<WarehouseOutputSheetContentPO> productsList = warehouseOutputSheetDao.getAllContentById(sheetId);
-        // 删除原有的不含批次的content
-        warehouseOutputSheetDao.deleteContent(sheetId);
-        // 分配后的出库单
-        List<WarehouseOutputSheetContentPO> ans = new ArrayList<>();
-        for (WarehouseOutputSheetContentPO product : productsList) {
-            ProductPO productPO = productDao.findById(product.getPid());
-            // 更新最新数量
-            productPO.setQuantity(productPO.getQuantity() - product.getQuantity());
-            productDao.updateById(productPO);
-            // 更新库存信息
-            // 查询获取同一商品的不同批次信息 按进价排序
-            int remainAmount = product.getQuantity();
-            List<WarehousePO> availableWarehouses = warehouseDao.findByPidOrderByPurchasePricePos(product.getPid());
-            for (WarehousePO availableWarehouse : availableWarehouses) {
-                WarehouseOutputSheetContentPO warehouseOutputSheetContentPO = new WarehouseOutputSheetContentPO();
-                BeanUtils.copyProperties(product, warehouseOutputSheetContentPO);
-                if (availableWarehouse.getQuantity() >= remainAmount) {
-                    availableWarehouse.setQuantity(remainAmount);
-                    warehouseDao.deductQuantity(availableWarehouse);
-                    warehouseOutputSheetContentPO.setBatchId(availableWarehouse.getBatchId());
-                    ans.add(warehouseOutputSheetContentPO);
-                    break;
-                }
-                else {
-                    remainAmount = remainAmount - availableWarehouse.getQuantity();
-                    warehouseDao.deductQuantity(availableWarehouse);
-                    warehouseOutputSheetContentPO.setBatchId(availableWarehouse.getBatchId());
-                    ans.add(warehouseOutputSheetContentPO);
-                }
-            }
-        }
-        warehouseOutputSheetDao.saveBatch(ans);
-    }
-
-    @Override
-    public List<WarehouseInputSheetContentPO> getWHISheetContentById(String sheetId) {
-        return warehouseInputSheetDao.getAllContentById(sheetId);
-    }
-
-    @Override
-    public List<WarehouseOutputSheetContentPO> getWHOSheetContentById(String sheetId) {
-        return warehouseOutputSheetDao.getAllContentById(sheetId);
     }
 
     /**

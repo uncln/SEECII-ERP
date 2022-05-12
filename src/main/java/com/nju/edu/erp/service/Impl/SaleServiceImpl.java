@@ -3,6 +3,7 @@ package com.nju.edu.erp.service.Impl;
 import com.nju.edu.erp.dao.CustomerDao;
 import com.nju.edu.erp.dao.ProductDao;
 import com.nju.edu.erp.dao.SaleSheetDao;
+import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
 import com.nju.edu.erp.enums.sheetState.SaleSheetState;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.ProductInfoVO;
@@ -143,30 +144,25 @@ public class SaleServiceImpl implements SaleService {
             int effectLines = saleSheetDao.updateSheetStateOnPrev(saleSheetId, prevState, state);
             if(effectLines == 0) throw new RuntimeException("状态更新失败");
             if(state.equals(SaleSheetState.SUCCESS)) {
-                // 更新商品表的最新零售价
+                // 更新商品表的最新进价
                 // 根据saleSheetId查到对应的content -> 得到商品id和单价
-                // 根据商品id和单价更新商品最近进价recentRp
+                // 根据商品id和单价更新商品最近进价recentPp
                 List<SaleSheetContentPO> saleSheetContents =  saleSheetDao.findContentBySheetId(saleSheetId);
                 List<WarehouseOutputFormContentVO> warehouseOutputFormContentVOS = new ArrayList<>();
 
                 for(SaleSheetContentPO content : saleSheetContents) {
-                    if (content.getQuantity() > productDao.findById(content.getPid()).getQuantity()) {
-                        throw new RuntimeException("商品不足");
-                    }
                     ProductInfoVO productInfoVO = new ProductInfoVO();
                     productInfoVO.setId(content.getPid());
-                    productInfoVO.setRecentRp(content.getUnitPrice());
+                    productInfoVO.setRecentPp(content.getUnitPrice());
 
                     productService.updateProduct(productInfoVO);
 
-                    // 批次信息在出库时确定
                     WarehouseOutputFormContentVO woContentVO = new WarehouseOutputFormContentVO();
                     woContentVO.setSalePrice(content.getUnitPrice());
                     woContentVO.setQuantity(content.getQuantity());
                     woContentVO.setRemark(content.getRemark());
                     woContentVO.setPid(content.getPid());
                     warehouseOutputFormContentVOS.add(woContentVO);
-
                 }
                 // 更新客户表(更新应付字段)
                 // 更新应付 payable

@@ -37,7 +37,7 @@ public class PurchaseController {
      * @param state 修改后的状态("审批失败"/"待二级审批")
      */
     @GetMapping(value = "/first-approval")
-    @Authorized (roles = {Role.SALE_MANAGER, Role.GM})
+    @Authorized (roles = {Role.SALE_MANAGER})
     public Response firstApproval(@RequestParam("purchaseSheetId") String purchaseSheetId,
                                   @RequestParam("state") PurchaseSheetState state)  {
         if(state.equals(PurchaseSheetState.FAILURE) || state.equals(PurchaseSheetState.PENDING_LEVEL_2)) {
