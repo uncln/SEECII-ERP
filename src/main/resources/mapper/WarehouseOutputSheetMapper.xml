@@ -6,6 +6,10 @@
         values (#{id},#{operator},#{createTime},#{state},#{saleSheetId})
     </insert>
 
+    <delete id="deleteContent">
+        delete from warehouse_output_sheet_content where wo_id = #{sheetId} ;
+    </delete>
+
     <select id="getLatest" resultMap="WarehouseOutputSheetPO">
         select * from warehouse_output_sheet order by id desc limit 0,1 ;
     </select>
@@ -17,11 +21,34 @@
         </foreach>
     </insert>
 
+    <update id="updateById">
+        update warehouse_output_sheet set operator = #{operator},
+        sale_sheet_id = #{saleSheetId}, `state` = #{state} where id = #{id};
+    </update>
+
+
     <!--库存查看:一个时间段内的出库数量合计-->
     <select id="getWarehouseOutputProductQuantityByTime" resultType="int">
         select sum(sc.quantity)
         from sale_sheet s,sale_sheet_content sc
         where s.state='审批完成' and s.id=sc.sale_sheet_id and s.create_time>=#{beginTime} and s.create_time &lt;= #{endTime};
+    </select>
+
+
+    <select id="getAllSheets" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet;
+    </select>
+
+    <select id="getDraftSheets" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet where `state` = #{state};
+    </select>
+
+    <select id="getSheet" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">
+        select * from warehouse_output_sheet where id = #{sheetId};
+    </select>
+
+    <select id="getAllContentById" resultType="com.nju.edu.erp.model.po.WarehouseOutputSheetContentPO">
+        select * from warehouse_output_sheet_content where wo_id = #{sheetId};
     </select>
 
     <resultMap id="WarehouseOutputSheetPO" type="com.nju.edu.erp.model.po.WarehouseOutputSheetPO">

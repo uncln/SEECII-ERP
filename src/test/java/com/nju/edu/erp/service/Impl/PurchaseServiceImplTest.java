@@ -44,6 +44,7 @@ class PurchaseServiceImplTest {
 
     @Test
     void approval() {
-        purchaseService.approval("JHD-20220504-00000", PurchaseSheetState.SUCCESS);
+        purchaseService.approval("JHD-20220504-00001", PurchaseSheetState.PENDING_LEVEL_2);
+        purchaseService.approval("JHD-20220504-00001", PurchaseSheetState.SUCCESS);
     }
 }

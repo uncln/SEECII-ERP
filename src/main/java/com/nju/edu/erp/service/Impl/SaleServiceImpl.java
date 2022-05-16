@@ -3,7 +3,6 @@ package com.nju.edu.erp.service.Impl;
 import com.nju.edu.erp.dao.CustomerDao;
 import com.nju.edu.erp.dao.ProductDao;
 import com.nju.edu.erp.dao.SaleSheetDao;
-import com.nju.edu.erp.enums.sheetState.PurchaseSheetState;
 import com.nju.edu.erp.enums.sheetState.SaleSheetState;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.vo.ProductInfoVO;
@@ -147,19 +146,25 @@ public class SaleServiceImpl implements SaleService {
             int effectLines = saleSheetDao.updateSheetStateOnPrev(saleSheetId, prevState, state);
             if(effectLines == 0) throw new RuntimeException("状态更新失败");
             if(state.equals(SaleSheetState.SUCCESS)) {
-                // 更新商品表的最新进价
+                // 更新商品表的最新零售价
                 // 根据saleSheetId查到对应的content -> 得到商品id和单价
-                // 根据商品id和单价更新商品最近进价recentPp
+                // 根据商品id和单价更新商品最近进价recentRp
                 List<SaleSheetContentPO> saleSheetContents =  saleSheetDao.findContentBySheetId(saleSheetId);
                 List<WarehouseOutputFormContentVO> warehouseOutputFormContentVOS = new ArrayList<>();
 
                 for(SaleSheetContentPO content : saleSheetContents) {
+
+                    if (content.getQuantity() > productDao.findById(content.getPid()).getQuantity()) {
+                        throw new RuntimeException("商品不足");
+                    }
+
                     ProductInfoVO productInfoVO = new ProductInfoVO();
                     productInfoVO.setId(content.getPid());
-                    productInfoVO.setRecentPp(content.getUnitPrice());
+                    productInfoVO.setRecentRp(content.getUnitPrice());
 
                     productService.updateProduct(productInfoVO);
 
+                    //批次信息在出库时确定
                     WarehouseOutputFormContentVO woContentVO = new WarehouseOutputFormContentVO();
                     woContentVO.setSalePrice(content.getUnitPrice());
                     woContentVO.setQuantity(content.getQuantity());
