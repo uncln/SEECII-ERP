@@ -53,8 +53,11 @@ class WarehouseServiceImplTest {
      * 库存查看：一个时间段内的入库数量合计
      */
     @Test
-    void testGetWarehouseInputProductQuantityByTime(){
-        int quantity= warehouseService.getWarehouseInputProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+    void testGetWarehouseInputProductQuantityByTime() throws ParseException {
+        //int quantity= warehouseService.getWarehouseInputProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+        int quantity= warehouseService.getWarehouseInputProductQuantityByTime("2022-5-20 00:00:00","2022-5-21 00:00:00");
+
+        System.out.println("入库数量是：");
         System.out.println(quantity);
     }
 
@@ -63,7 +66,7 @@ class WarehouseServiceImplTest {
      */
     @Test
     void testGetWarehouseOutputProductQuantityByTime(){
-        int quantity= warehouseService.getWarehouseOutProductQuantityByTime("2021-5-9 22:36:01","2022-5-9 16:13:20");
+        int quantity= warehouseService.getWarehouseOutProductQuantityByTime("2022-5-20 00:00:00","2022-5-21 00:00:00");
         System.out.println(quantity);
     }
 

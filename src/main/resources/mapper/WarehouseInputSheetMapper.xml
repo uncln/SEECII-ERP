@@ -55,7 +55,7 @@
     </select>
 
 <!--库存查看:一个时间段内的入库数量合计-->
-    <select id="getWarehouseInputProductQuantityByTime" resultType="int">
+    <select id="getWarehouseInputProductQuantityByTime" resultType="java.lang.Integer">
         select sum(pc.quantity)
         from purchase_sheet p,purchase_sheet_content pc
         where p.state='审批完成' and p.id=pc.purchase_sheet_id and p.create_time>=#{beginTime} and p.create_time &lt;= #{endTime};

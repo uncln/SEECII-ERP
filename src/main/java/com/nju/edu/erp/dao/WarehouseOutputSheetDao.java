@@ -71,5 +71,5 @@ public interface WarehouseOutputSheetDao {
      */
     void deleteContent(String sheetId);
 
-    int getWarehouseOutputProductQuantityByTime(Date beginTime,Date endTime);
+    Integer getWarehouseOutputProductQuantityByTime(Date beginTime,Date endTime);
 }

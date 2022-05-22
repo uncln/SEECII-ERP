@@ -378,10 +378,18 @@ public class WarehouseServiceImpl implements WarehouseService {
         try{
             Date beginTime =dateFormat.parse(beginDateStr);
             Date endTime=dateFormat.parse(endDateStr);
+            //System.out.println("时间比较："+beginTime.compareTo(endTime));
             if(beginTime.compareTo(endTime)>0){
+
                 return 0;
             }else{
-                return warehouseInputSheetDao.getWarehouseInputProductQuantityByTime(beginTime,endTime);
+                System.out.println("开始时间："+beginTime.toString()+",结束时间:"+endTime.toString());
+                Integer quantity= warehouseInputSheetDao.getWarehouseInputProductQuantityByTime(beginTime,endTime);
+                if(quantity==null){
+                    return 0;
+                }
+                return quantity;
+
             }
         }catch (ParseException e) {
             e.printStackTrace();
@@ -403,7 +411,11 @@ public class WarehouseServiceImpl implements WarehouseService {
             if(beginTime.compareTo(endTime)>0){
                 return 0;
             }else{
-                return warehouseOutputSheetDao.getWarehouseOutputProductQuantityByTime(beginTime,endTime);
+                Integer quantity= warehouseOutputSheetDao.getWarehouseOutputProductQuantityByTime(beginTime,endTime);
+                if(quantity==null){
+                    return 0;
+                }
+                return quantity;
             }
         }catch (ParseException e) {
             e.printStackTrace();

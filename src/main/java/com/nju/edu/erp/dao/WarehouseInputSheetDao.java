@@ -68,5 +68,5 @@ public interface WarehouseInputSheetDao {
      */
     List<WarehouseIODetailPO> getWarehouseIODetailByTime(Date beginTime,Date endTime);
 
-    int getWarehouseInputProductQuantityByTime(Date beginTime,Date endTime);
+    Integer getWarehouseInputProductQuantityByTime(Date beginTime,Date endTime);
 }

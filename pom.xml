@@ -64,12 +64,12 @@
 
         <!-- https://mvnrepository.com/artifact/junit/junit -->
 <!--        &lt;!&ndash; 要用junit4 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>junit</groupId>-->
-<!--            <artifactId>junit</artifactId>-->
-<!--            <version>4.13</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+            <scope>test</scope>
+        </dependency>
 <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.mockito/mockito-core &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>org.mockito</groupId>-->
