@@ -87,7 +87,7 @@ public class SaleServiceImpl implements SaleService {
             saleSheetPO.setSalesman(customerDao.findOneById(saleSheetPO.getSupplier()).getName());
         }
         saleSheetPO.setRawTotalAmount(totalAmount);
-        saleSheetPO.setFinalAmount(totalAmount.multiply(saleSheetPO.getDiscount()));
+        saleSheetPO.setFinalAmount(totalAmount.multiply(saleSheetPO.getDiscount()).subtract(saleSheetPO.getVoucherAmount()));
         saleSheetDao.saveBatchSheetContent(saleSheetContentPOList);
         saleSheetDao.saveSheet(saleSheetPO);
     }
