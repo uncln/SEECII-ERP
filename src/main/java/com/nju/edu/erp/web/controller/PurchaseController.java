@@ -66,11 +66,22 @@ public class PurchaseController {
     }
 
     /**
-     * 根据状态查看销售单
+     * 根据状态查看进货单
      */
     @GetMapping(value = "/sheet-show")
     public Response showSheetByState(@RequestParam(value = "state", required = false) PurchaseSheetState state)  {
         return Response.buildSuccess(purchaseService.getPurchaseSheetByState(state));
+    }
+
+
+    /**
+     * 根据进货单Id搜索进货单信息
+     * @param id 进货单Id
+     * @return 进货单全部信息
+     */
+    @GetMapping(value = "/find-sheet")
+    public Response findBySheetId(@RequestParam(value = "id") String id)  {
+        return Response.buildSuccess(purchaseService.getPurchaseSheetById(id));
     }
 
 }

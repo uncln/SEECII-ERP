@@ -3,10 +3,11 @@ package com.nju.edu.erp.service.Impl;
 import com.nju.edu.erp.dao.*;
 import com.nju.edu.erp.enums.sheetState.WarehouseInputSheetState;
 import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
-import com.nju.edu.erp.exception.MyServiceException;
 import com.nju.edu.erp.model.po.*;
+import com.nju.edu.erp.model.vo.ProductInfoVO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.*;
+import com.nju.edu.erp.service.ProductService;
 import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
 import org.springframework.beans.BeanUtils;
@@ -25,18 +26,20 @@ import java.util.List;
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
 
-    private final ProductDao productDao;
+    private final ProductDao productDao; // 其实不建议直接访问其他服务的dao层
     private final WarehouseDao warehouseDao;
     private final WarehouseInputSheetDao warehouseInputSheetDao;
     private final WarehouseOutputSheetDao warehouseOutputSheetDao;
+    private final ProductService productService;
 
 
     @Autowired
-    public WarehouseServiceImpl(ProductDao productDao, WarehouseDao warehouseDao, WarehouseInputSheetDao warehouseInputSheetDao, WarehouseOutputSheetDao warehouseOutputSheetDao) {
+    public WarehouseServiceImpl(ProductDao productDao, WarehouseDao warehouseDao, WarehouseInputSheetDao warehouseInputSheetDao, WarehouseOutputSheetDao warehouseOutputSheetDao, ProductService productService) {
         this.productDao = productDao;
         this.warehouseDao = warehouseDao;
         this.warehouseInputSheetDao = warehouseInputSheetDao;
         this.warehouseOutputSheetDao = warehouseOutputSheetDao;
+        this.productService = productService;
     }
 
     /**
@@ -421,5 +424,26 @@ public class WarehouseServiceImpl implements WarehouseService {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    /**
+     * 库存盘点
+     * 盘点的是当天的库存快照，包括当天的各种商品的
+     * 名称，型号，库存数量，库存均价，批次，批号，出厂日期，并且显示行号。
+     * 要求可以导出Excel
+     */
+    @Override
+    public List<WarehouseCountingVO> warehouseCounting() {
+        List<WarehousePO> all = warehouseDao.findAll();
+        List<WarehouseCountingVO> res = new ArrayList<>();
+        for(WarehousePO warehousePO : all) {
+            WarehouseCountingVO vo = new WarehouseCountingVO();
+            BeanUtils.copyProperties(warehousePO, vo);
+            String pid = warehousePO.getPid();
+            ProductInfoVO product = productService.getOneProductByPid(pid);
+            vo.setProduct(product);
+            res.add(vo);
+        }
+        return res;
     }
 }

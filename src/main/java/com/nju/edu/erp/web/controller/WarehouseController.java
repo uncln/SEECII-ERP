@@ -166,4 +166,17 @@ public class WarehouseController {
         int quantity= warehouseService.getWarehouseOutProductQuantityByTime(beginDateStr,endDateStr);
         return Response.buildSuccess(quantity);
     }
+
+    /**
+     * 库存盘点
+     * 盘点的是当天的库存快照，包括当天的各种商品的
+     * 名称，型号，库存数量，库存均价，批次，批号，出厂日期，并且显示行号。
+     * 要求可以导出Excel
+     *
+     */
+    @GetMapping("/warehouse/counting")
+    @Authorized(roles = {Role.ADMIN,Role.INVENTORY_MANAGER})
+    public Response getWarehouseCounting() {
+        return Response.buildSuccess(warehouseService.warehouseCounting());
+    }
 }

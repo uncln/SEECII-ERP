@@ -20,6 +20,7 @@ import com.nju.edu.erp.service.WarehouseService;
 import com.nju.edu.erp.utils.IdGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -183,5 +184,26 @@ public class PurchaseServiceImpl implements PurchaseService {
                 warehouseService.productWarehousing(warehouseInputFormVO);
             }
         }
+    }
+
+    /**
+     * 根据进货单Id搜索进货单信息
+     * @param purchaseSheetId 进货单Id
+     * @return 进货单全部信息
+     */
+    @Override
+    public PurchaseSheetVO getPurchaseSheetById(String purchaseSheetId) {
+        PurchaseSheetPO purchaseSheetPO = purchaseSheetDao.findOneById(purchaseSheetId);
+        if(purchaseSheetPO == null) return null;
+        List<PurchaseSheetContentPO> contentPO = purchaseSheetDao.findContentByPurchaseSheetId(purchaseSheetId);
+        PurchaseSheetVO pVO = new PurchaseSheetVO();
+        BeanUtils.copyProperties(purchaseSheetPO, pVO);
+        for (PurchaseSheetContentPO content:
+             contentPO) {
+            PurchaseSheetContentVO pContentVO = new PurchaseSheetContentVO();
+            BeanUtils.copyProperties(content, pContentVO);
+            pVO.getPurchaseSheetContent().add(pContentVO);
+        }
+        return pVO;
     }
 }

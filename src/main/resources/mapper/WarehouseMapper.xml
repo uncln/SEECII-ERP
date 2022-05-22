@@ -26,6 +26,9 @@
     <select id="findByPidOrderByPurchasePricePos" resultType="com.nju.edu.erp.model.po.WarehousePO">
         select * from warehouse where pid = #{pid} and quantity > 0 order by purchase_price desc;
     </select>
+    <select id="findAll" resultType="com.nju.edu.erp.model.vo.warehouse.WarehouseCountingVO">
+        select * from warehouse order by pid, batch_id;
+    </select>
 
     <resultMap id="WarehousePO" type="com.nju.edu.erp.model.po.WarehousePO">
         <id column="id" property="id"></id>

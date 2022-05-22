@@ -92,4 +92,14 @@ public class SaleController {
         return Response.buildSuccess(ans);
     }
 
+    /**
+     * 根据销售单Id搜索销售单信息
+     * @param id 销售单Id
+     * @return 销售单全部信息
+     */
+    @GetMapping(value = "/find-sheet")
+    public Response findBySheetId(@RequestParam(value = "id") String id)  {
+        return Response.buildSuccess(saleService.getSaleSheetById(id));
+    }
+
 }

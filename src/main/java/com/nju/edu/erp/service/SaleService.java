@@ -43,4 +43,10 @@ public interface SaleService {
      */
     CustomerPurchaseAmountPO getMaxAmountCustomerOfSalesmanByTime(String salesman,String beginDateStr,String endDateStr);
 
+    /**
+     * 根据销售单Id搜索销售单信息
+     * @param saleSheetId 销售单Id
+     * @return 销售单全部信息
+     */
+    SaleSheetVO getSaleSheetById(String saleSheetId);
 }

@@ -9,6 +9,8 @@ import com.nju.edu.erp.model.vo.ProductInfoVO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetContentVO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetVO;
 import com.nju.edu.erp.model.vo.UserVO;
+import com.nju.edu.erp.model.vo.purchase.PurchaseSheetContentVO;
+import com.nju.edu.erp.model.vo.purchase.PurchaseSheetVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormContentVO;
 import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
 import com.nju.edu.erp.service.CustomerService;
@@ -211,5 +213,26 @@ public class SaleServiceImpl implements SaleService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 根据销售单Id搜索销售单信息
+     * @param saleSheetId 销售单Id
+     * @return 销售单全部信息
+     */
+    @Override
+    public SaleSheetVO getSaleSheetById(String saleSheetId) {
+        SaleSheetPO saleSheetPO = saleSheetDao.findSheetById(saleSheetId);
+        if(saleSheetPO == null) return null;
+        List<SaleSheetContentPO> contentPO = saleSheetDao.findContentBySheetId(saleSheetId);
+        SaleSheetVO sVO = new SaleSheetVO();
+        BeanUtils.copyProperties(saleSheetPO, sVO);
+        for (SaleSheetContentPO content:
+                contentPO) {
+            SaleSheetContentVO sContentVO = new SaleSheetContentVO();
+            BeanUtils.copyProperties(content, sContentVO);
+            sVO.getSaleSheetContent().add(sContentVO);
+        }
+        return sVO;
     }
 }

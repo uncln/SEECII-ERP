@@ -5,13 +5,9 @@ import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.vo.UserVO;
-import com.nju.edu.erp.model.vo.warehouse.GetWareProductInfoParamsVO;
-import com.nju.edu.erp.model.vo.warehouse.WarehouseInputFormVO;
-import com.nju.edu.erp.model.vo.warehouse.WarehouseOneProductInfoVO;
-import com.nju.edu.erp.model.vo.warehouse.WarehouseOutputFormVO;
+import com.nju.edu.erp.model.vo.warehouse.*;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 public interface WarehouseService {
@@ -103,4 +99,12 @@ public interface WarehouseService {
      */
     int getWarehouseOutProductQuantityByTime(String beginDateStr,String endDateStr);
 
+    /**
+     * 库存盘点
+     * 盘点的是当天的库存快照，包括当天的各种商品的
+     * 名称，型号，库存数量，库存均价，批次，批号，出厂日期，并且显示行号。
+     * 要求可以导出Excel
+     *
+     */
+    List<WarehouseCountingVO> warehouseCounting();
 }

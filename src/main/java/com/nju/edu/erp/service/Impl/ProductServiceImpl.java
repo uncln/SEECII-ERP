@@ -107,6 +107,20 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    /**
+     * 通过pid获取商品详情
+     *
+     * @param pid 商品id
+     * @return 商品详情
+     */
+    @Override
+    public ProductInfoVO getOneProductByPid(String pid) {
+        ProductPO productPO = productDao.findById(pid);
+        ProductInfoVO productInfoVO = new ProductInfoVO();
+        BeanUtils.copyProperties(productPO, productInfoVO);
+        return productInfoVO;
+    }
+
 
     private String generateProductId(CategoryPO categoryPO) {
         StringBuffer ans = new StringBuffer();

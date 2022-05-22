@@ -29,6 +29,13 @@ public interface PurchaseService {
      */
     void approval(String purchaseSheetId, PurchaseSheetState state);
 
+    /**
+     * 根据进货单Id搜索进货单信息
+     * @param purchaseSheetId 进货单Id
+     * @return 进货单全部信息
+     */
+    PurchaseSheetVO getPurchaseSheetById(String purchaseSheetId);
+
 
 
 
