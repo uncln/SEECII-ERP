@@ -77,7 +77,7 @@ public class SaleServiceImpl implements SaleService {
             BigDecimal unitPrice = sContentPO.getUnitPrice();
             if (unitPrice == null) {
                 ProductPO productPO = productDao.findById(content.getPid());
-                unitPrice = productPO.getPurchasePrice();
+                unitPrice = productPO.getRetailPrice();
                 sContentPO.setUnitPrice(unitPrice);
             }
             sContentPO.setSaleSheetId(sheetId);
@@ -175,10 +175,13 @@ public class SaleServiceImpl implements SaleService {
                     warehouseOutputFormContentVOS.add(woContentVO);
                 }
                 // 更新客户表(更新应付字段)
-                // 更新应付 payable
+                // 更新应收 receivable  -> 应收（客户还应付给本公司但还未付的钱， 即本公司应收的钱）
                 SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
                 CustomerPO customerPO = customerService.findCustomerById(saleSheet.getSupplier());
-                customerPO.setPayable(customerPO.getReceivable().add(saleSheet.getFinalAmount().subtract(saleSheet.getVoucherAmount() == null ? BigDecimal.ZERO : saleSheet.getVoucherAmount())));
+                customerPO.setReceivable(customerPO.getReceivable().add(saleSheet.getFinalAmount()));
+                if(customerPO.getReceivable().compareTo(customerPO.getLineOfCredit())>0) {
+                    throw new RuntimeException("客户信用不足！");
+                }
                 customerService.updateCustomer(customerPO);
 
                 // 制定出库单草稿(在这里关联销售单)

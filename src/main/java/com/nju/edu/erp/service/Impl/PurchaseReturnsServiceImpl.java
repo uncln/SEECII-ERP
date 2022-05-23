@@ -169,6 +169,9 @@ public class PurchaseReturnsServiceImpl implements PurchaseReturnsService {
                     if(warehousePO.getQuantity() >= quantity) {
                         warehousePO.setQuantity(quantity);
                         warehouseDao.deductQuantity(warehousePO);
+                        ProductInfoVO productInfoVO = productService.getOneProductByPid(pid);
+                        productInfoVO.setQuantity(productInfoVO.getQuantity()-quantity);
+                        productService.updateProduct(productInfoVO);
                         payableToDeduct = payableToDeduct.add(content.getUnitPrice().multiply(BigDecimal.valueOf(quantity))) ;
                     } else {
                         purchaseReturnsSheetDao.updateState(purchaseReturnsSheetId, PurchaseReturnsSheetState.FAILURE);

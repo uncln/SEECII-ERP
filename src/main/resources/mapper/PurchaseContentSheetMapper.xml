@@ -33,7 +33,7 @@
     </select>
     <select id="findBatchId" resultType="java.lang.Integer">
         select wis.batch_id from purchase_returns_sheet prs, warehouse_input_sheet wis
-        where prs.purchase_sheet_id = wis.purchase_sheet_id
+        where prs.purchase_sheet_id = wis.purchase_sheet_id and prs.id = #{purchaseReturnsSheetId}
     </select>
 
     <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id">

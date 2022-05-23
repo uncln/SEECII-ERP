@@ -29,7 +29,7 @@ public class SaleController {
     /**
      * 销售人员制定销售单
      */
-    @Authorized (roles = {Role.SALE_STAFF, Role.SALE_MANAGER, Role.GM})
+    @Authorized (roles = {Role.SALE_STAFF, Role.SALE_MANAGER, Role.GM, Role.ADMIN})
     @PostMapping(value = "/sheet-make")
     public Response makePurchaseOrder(UserVO userVO, @RequestBody SaleSheetVO saleSheetVO)  {
         saleService.makeSaleSheet(userVO, saleSheetVO);
@@ -50,7 +50,7 @@ public class SaleController {
      * @param state 修改后的状态("审批失败"/"待二级审批")
      */
     @GetMapping(value = "/first-approval")
-    @Authorized (roles = {Role.SALE_MANAGER})
+    @Authorized (roles = {Role.SALE_MANAGER, Role.ADMIN})
     public Response firstApproval(@RequestParam("saleSheetId") String saleSheetId,
                                   @RequestParam("state") SaleSheetState state)  {
         if(state.equals(SaleSheetState.FAILURE) || state.equals(SaleSheetState.PENDING_LEVEL_2)) {
@@ -66,7 +66,7 @@ public class SaleController {
      * @param saleSheetId 进货单id
      * @param state 修改后的状态("审批失败"/"审批完成")
      */
-    @Authorized (roles = {Role.GM})
+    @Authorized (roles = {Role.GM, Role.ADMIN})
     @GetMapping(value = "/second-approval")
     public Response secondApproval(@RequestParam("saleSheetId") String saleSheetId,
                                    @RequestParam("state") SaleSheetState state)  {
@@ -86,7 +86,7 @@ public class SaleController {
      * @return
      */
     @GetMapping("/maxAmountCustomer")
-    @Authorized(roles = {Role.SALE_MANAGER,Role.GM})
+    @Authorized(roles = {Role.SALE_MANAGER,Role.GM, Role.ADMIN})
     public Response getMaxAmountCustomerOfSalesmanByTime(@RequestParam String salesman, @RequestParam String beginDateStr, @RequestParam String endDateStr){
         CustomerPurchaseAmountPO ans=saleService.getMaxAmountCustomerOfSalesmanByTime(salesman,beginDateStr,endDateStr);
         return Response.buildSuccess(ans);
