@@ -227,12 +227,14 @@ public class SaleServiceImpl implements SaleService {
         List<SaleSheetContentPO> contentPO = saleSheetDao.findContentBySheetId(saleSheetId);
         SaleSheetVO sVO = new SaleSheetVO();
         BeanUtils.copyProperties(saleSheetPO, sVO);
+        List<SaleSheetContentVO> saleSheetContentVOList = new ArrayList<>();
         for (SaleSheetContentPO content:
                 contentPO) {
             SaleSheetContentVO sContentVO = new SaleSheetContentVO();
             BeanUtils.copyProperties(content, sContentVO);
-            sVO.getSaleSheetContent().add(sContentVO);
+            saleSheetContentVOList.add(sContentVO);
         }
+        sVO.setSaleSheetContent(saleSheetContentVOList);
         return sVO;
     }
 }
