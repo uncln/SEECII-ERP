@@ -1,10 +1,15 @@
 package com.nju.edu.erp.service;
 
+import com.nju.edu.erp.dao.CustomerDao;
+import com.nju.edu.erp.dao.ProductDao;
 import com.nju.edu.erp.dao.SaleSheetDao;
+import com.nju.edu.erp.dao.WarehouseOutputSheetDao;
 import com.nju.edu.erp.enums.Role;
 import com.nju.edu.erp.enums.sheetState.SaleSheetState;
+import com.nju.edu.erp.enums.sheetState.WarehouseOutputSheetState;
 import com.nju.edu.erp.model.po.SaleSheetContentPO;
 import com.nju.edu.erp.model.po.SaleSheetPO;
+import com.nju.edu.erp.model.po.WarehouseOutputSheetPO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetContentVO;
 import com.nju.edu.erp.model.vo.Sale.SaleSheetVO;
 import com.nju.edu.erp.model.vo.UserVO;
@@ -24,13 +29,22 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @SpringBootTest
-public class SaleServiceTest {
+public class SaleServiceTest { // 该测试为集成测试，需要用到数据库，请大家连给定的测试数据库进行测试
 
     @Autowired
     SaleService saleService;
 
     @Autowired
     SaleSheetDao saleSheetDao;
+
+    @Autowired
+    ProductDao productDao;
+
+    @Autowired
+    CustomerDao customerDao;
+
+    @Autowired
+    WarehouseOutputSheetDao warehouseOutputSheetDao;
 
     @Test
     @Transactional
@@ -107,7 +121,69 @@ public class SaleServiceTest {
     @Test
     @Transactional
     @Rollback(value = true)
-    public void approval() {
+    public void approval_exceptions_1() { // 一级审批不能直接到审批完成 (提示：可以以抛出异常的方式终止流程，这样就能触发事务回滚)
+        try {
+            saleService.approval("XSD-20220524-00004", SaleSheetState.SUCCESS);
+        } catch (Exception ignore){
+        } finally {
+            SaleSheetPO sheet = saleSheetDao.findSheetById("XSD-20220524-00004");
+            Assertions.assertEquals(SaleSheetState.PENDING_LEVEL_1,sheet.getState());
+        }
+    }
 
+    @Test
+    @Transactional
+    @Rollback(value = true)
+    public void approval_exceptions_2() { // 二级审批不能回到一级审批
+        try {
+            saleService.approval("XSD-20220524-00003", SaleSheetState.PENDING_LEVEL_1);
+        } catch (Exception ignore){
+        } finally {
+            SaleSheetPO sheet = saleSheetDao.findSheetById("XSD-20220524-00003");
+            Assertions.assertEquals(SaleSheetState.PENDING_LEVEL_2,sheet.getState());
+        }
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = true)
+    public void approval_failed() { // 测试审批失败
+        saleService.approval("XSD-20220524-00003", SaleSheetState.FAILURE);
+        SaleSheetPO sheet = saleSheetDao.findSheetById("XSD-20220524-00003");
+        Assertions.assertEquals(SaleSheetState.FAILURE,sheet.getState());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = true)
+    public void approval_1() { // 测试一级审批
+        saleService.approval("XSD-20220524-00004", SaleSheetState.PENDING_LEVEL_2);
+        SaleSheetPO sheet = saleSheetDao.findSheetById("XSD-20220524-00004");
+        Assertions.assertEquals(SaleSheetState.PENDING_LEVEL_2,sheet.getState());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = true)
+    public void approval_2() { // 测试二级审批
+        // 二级审批成功之后需要进行
+        // 1. 修改单据状态
+        // 2. 更新商品表
+        // 3. 更新客户表
+        // 4. 新建出库草稿
+        saleService.approval("XSD-20220524-00003", SaleSheetState.SUCCESS);
+        SaleSheetPO sheet = saleSheetDao.findSheetById("XSD-20220524-00003");
+        Assertions.assertEquals(SaleSheetState.SUCCESS,sheet.getState());
+
+        Assertions.assertEquals(0, productDao.findById("0000000000400000").getRecentRp().compareTo(BigDecimal.valueOf(2800.00)));
+        Assertions.assertEquals(0, productDao.findById("0000000000400001").getRecentRp().compareTo(BigDecimal.valueOf(3800.00)));
+
+        Assertions.assertEquals(0, customerDao.findOneById(2).getReceivable().compareTo(BigDecimal.valueOf(4959100.00)));
+        List<WarehouseOutputSheetPO> draftSheets = warehouseOutputSheetDao.getDraftSheets(WarehouseOutputSheetState.DRAFT);
+        Assertions.assertNotNull(draftSheets);
+        Assertions.assertEquals(1, draftSheets.size());
+        WarehouseOutputSheetPO draftSheet = draftSheets.get(0);
+        Assertions.assertNotNull(draftSheet);
+        Assertions.assertEquals("XSD-20220524-00003",draftSheet.getSaleSheetId());
     }
 }

@@ -61,6 +61,7 @@ public class SaleServiceImpl implements SaleService {
     public void makeSaleSheet(UserVO userVO, SaleSheetVO saleSheetVO) {
         // TODO
         // 需要持久化销售单（SaleSheet）和销售单content（SaleSheetContent），其中总价或者折后价格的计算需要在后端进行
+        // 需要的service和dao层相关方法均已提供，可以不用自己再实现一遍
     }
 
     @Override
@@ -68,6 +69,7 @@ public class SaleServiceImpl implements SaleService {
     public List<SaleSheetVO> getSaleSheetByState(SaleSheetState state) {
         // TODO
         // 根据单据状态获取销售单（注意：VO包含SaleSheetContent）
+        // 依赖的dao层部分方法未提供，需要自己实现
         return null;
     }
 
@@ -75,74 +77,22 @@ public class SaleServiceImpl implements SaleService {
      * 根据销售单id进行审批(state == "待二级审批"/"审批完成"/"审批失败")
      * 在controller层进行权限控制
      *
-     * @param saleSheetId 进货单id
-     * @param state           销售单要达到的状态
+     * @param saleSheetId 销售单id
+     * @param state       销售单要达到的状态
      */
     @Override
     @Transactional
     public void approval(String saleSheetId, SaleSheetState state) {
-        if(state.equals(SaleSheetState.FAILURE)) {
-            SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
-            if(saleSheet.getState() == SaleSheetState.SUCCESS) throw new RuntimeException("状态更新失败");
-            int effectLines = saleSheetDao.updateSheetState(saleSheetId, state);
-            if(effectLines == 0) throw new RuntimeException("状态更新失败");
-        } else {
-            SaleSheetState prevState;
-            if(state.equals(SaleSheetState.SUCCESS)) {
-                prevState = SaleSheetState.PENDING_LEVEL_2;
-            } else if(state.equals(SaleSheetState.PENDING_LEVEL_2)) {
-                prevState = SaleSheetState.PENDING_LEVEL_1;
-            } else {
-                throw new RuntimeException("状态更新失败");
-            }
-            int effectLines = saleSheetDao.updateSheetStateOnPrev(saleSheetId, prevState, state);
-            if(effectLines == 0) throw new RuntimeException("状态更新失败");
-            if(state.equals(SaleSheetState.SUCCESS)) {
-                // 更新商品表的最新零售价
-                // 根据saleSheetId查到对应的content -> 得到商品id和单价
-                // 根据商品id和单价更新商品最近进价recentRp
-                List<SaleSheetContentPO> saleSheetContents =  saleSheetDao.findContentBySheetId(saleSheetId);
-                List<WarehouseOutputFormContentVO> warehouseOutputFormContentVOS = new ArrayList<>();
-
-                for(SaleSheetContentPO content : saleSheetContents) {
-
-                    if (content.getQuantity() > productDao.findById(content.getPid()).getQuantity()) {
-                        throw new RuntimeException("商品不足");
-                    }
-
-                    ProductInfoVO productInfoVO = new ProductInfoVO();
-                    productInfoVO.setId(content.getPid());
-                    productInfoVO.setRecentRp(content.getUnitPrice());
-
-                    productService.updateProduct(productInfoVO);
-
-                    //批次信息在出库时确定
-                    WarehouseOutputFormContentVO woContentVO = new WarehouseOutputFormContentVO();
-                    woContentVO.setSalePrice(content.getUnitPrice());
-                    woContentVO.setQuantity(content.getQuantity());
-                    woContentVO.setRemark(content.getRemark());
-                    woContentVO.setPid(content.getPid());
-                    warehouseOutputFormContentVOS.add(woContentVO);
-                }
-                // 更新客户表(更新应付字段)
-                // 更新应收 receivable  -> 应收（客户还应付给本公司但还未付的钱， 即本公司应收的钱）
-                SaleSheetPO saleSheet = saleSheetDao.findSheetById(saleSheetId);
-                CustomerPO customerPO = customerService.findCustomerById(saleSheet.getSupplier());
-                customerPO.setReceivable(customerPO.getReceivable().add(saleSheet.getFinalAmount()));
-                if(customerPO.getReceivable().compareTo(customerPO.getLineOfCredit())>0) {
-                    throw new RuntimeException("客户信用不足！");
-                }
-                customerService.updateCustomer(customerPO);
-
-                // 制定出库单草稿(在这里关联销售单)
-                // 调用创建出库单的方法
-                WarehouseOutputFormVO warehouseOutputFormVO = new WarehouseOutputFormVO();
-                warehouseOutputFormVO.setOperator(null); // 暂时不填操作人(确认草稿单的时候填写)
-                warehouseOutputFormVO.setSaleSheetId(saleSheetId);
-                warehouseOutputFormVO.setList(warehouseOutputFormContentVOS);
-                warehouseService.productOutOfWarehouse(warehouseOutputFormVO);
-            }
-        }
+        // TODO
+        // 需要的service和dao层相关方法均已提供，可以不用自己再实现一遍
+        /* 一些注意点：
+            1. 二级审批成功之后需要进行
+                 1. 修改单据状态
+                 2. 更新商品表
+                 3. 更新客户表
+                 4. 新建出库草稿
+            2. 一级审批状态不能直接到审批完成状态； 二级审批状态不能回到一级审批状态
+         */
     }
 
     /**
