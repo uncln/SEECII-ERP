@@ -59,66 +59,16 @@ public class SaleServiceImpl implements SaleService {
     @Override
     @Transactional
     public void makeSaleSheet(UserVO userVO, SaleSheetVO saleSheetVO) {
-        SaleSheetPO saleSheetPO = new SaleSheetPO();
-        BeanUtils.copyProperties(saleSheetVO, saleSheetPO);
-        // 设置操作员和时间
-        saleSheetPO.setOperator(userVO.getName());
-        saleSheetPO.setCreateTime(new Date());
-        // 获取id并设置
-        SaleSheetPO latestSheet = saleSheetDao.getLatestSheet();
-        String sheetId = IdGenerator.generateSheetId(latestSheet == null ? null : latestSheet.getId(), "XSD");
-        saleSheetPO.setId(sheetId);
-        saleSheetPO.setState(SaleSheetState.PENDING_LEVEL_1);
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        List<SaleSheetContentPO> saleSheetContentPOList = new ArrayList<>();
-        for (SaleSheetContentVO content : saleSheetVO.getSaleSheetContent()) {
-            SaleSheetContentPO sContentPO = new SaleSheetContentPO();
-            BeanUtils.copyProperties(content, sContentPO);
-            BigDecimal unitPrice = sContentPO.getUnitPrice();
-            if (unitPrice == null) {
-                ProductPO productPO = productDao.findById(content.getPid());
-                unitPrice = productPO.getRetailPrice();
-                sContentPO.setUnitPrice(unitPrice);
-            }
-            sContentPO.setSaleSheetId(sheetId);
-            sContentPO.setTotalPrice(unitPrice.multiply(BigDecimal.valueOf(sContentPO.getQuantity())));
-            saleSheetContentPOList.add(sContentPO);
-            totalAmount = totalAmount.add(sContentPO.getTotalPrice());
-        }
-        if (saleSheetPO.getSalesman() == null) {
-            saleSheetPO.setSalesman(customerDao.findOneById(saleSheetPO.getSupplier()).getName());
-        }
-        saleSheetPO.setRawTotalAmount(totalAmount);
-        saleSheetPO.setFinalAmount(totalAmount.multiply(saleSheetPO.getDiscount()).subtract(saleSheetPO.getVoucherAmount()));
-        saleSheetDao.saveBatchSheetContent(saleSheetContentPOList);
-        saleSheetDao.saveSheet(saleSheetPO);
+        // TODO
+        // 需要持久化销售单（SaleSheet）和销售单content（SaleSheetContent），其中总价或者折后价格的计算需要在后端进行
     }
 
     @Override
     @Transactional
     public List<SaleSheetVO> getSaleSheetByState(SaleSheetState state) {
-        List<SaleSheetVO> res = new ArrayList<>();
-        List<SaleSheetPO> rawData;
-        if (state == null) {
-            rawData = saleSheetDao.findAllSheet();
-        }
-        else {
-            rawData = saleSheetDao.findSheetByState(state);
-        }
-        for (SaleSheetPO sheetPO : rawData) {
-            SaleSheetVO sheetVO = new SaleSheetVO();
-            BeanUtils.copyProperties(sheetPO, sheetVO);
-            List<SaleSheetContentPO> sContents = saleSheetDao.findContentBySheetId(sheetPO.getId());
-            List<SaleSheetContentVO> contentVO = new ArrayList<>();
-            for (SaleSheetContentPO sContent : sContents) {
-                SaleSheetContentVO tempVO = new SaleSheetContentVO();
-                BeanUtils.copyProperties(sContent, tempVO);
-                contentVO.add(tempVO);
-            }
-            sheetVO.setSaleSheetContent(contentVO);
-            res.add(sheetVO);
-        }
-        return res;
+        // TODO
+        // 根据单据状态获取销售单（注意：VO包含SaleSheetContent）
+        return null;
     }
 
     /**
