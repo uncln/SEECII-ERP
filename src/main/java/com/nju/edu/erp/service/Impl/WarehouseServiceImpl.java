@@ -349,80 +349,52 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     /**
      * 库存查看：设定一个时间段，查看此时间段内的出/入库数量/金额/商品信息/分类信息
-     * @param beginDateStr 开始时间字符串
-     * @param endDateStr 结束时间字符串
+     * @param beginDateStr 开始时间字符串 格式为："yyyy-MM-dd HH:mm:ss"
+     * @param endDateStr 结束时间字符串  格式为："yyyy-MM-dd HH:mm:ss"
      * @return
      */
     @Override
     public List<WarehouseIODetailPO> getWarehouseIODetailByTime(String beginDateStr,String endDateStr) {
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try{
-            Date beginTime =dateFormat.parse(beginDateStr);
-            Date endTime=dateFormat.parse(endDateStr);
-            if(beginTime.compareTo(endTime)>0){
-                return null;
-            }else{
-                return warehouseInputSheetDao.getWarehouseIODetailByTime(beginTime,endTime);
-            }
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
+        // TODO
+        /**
+         * 1.注意日期的格式转换和转换异常
+         * 2.考虑开始时间大于结束时间的情况、查询结果为空的情况
+         * 3.Dao层和service层接口已实现
+         *
+         */
         return null;
     }
 
     /**
      * 库存查看：一个时间段内的入库数量合计
-     * @param beginDateStr
-     * @param endDateStr
+     * @param beginDateStr 开始时间字符串 格式为："yyyy-MM-dd HH:mm:ss"
+     * @param endDateStr 结束时间字符串 格式为："yyyy-MM-dd HH:mm:ss"
      * @return
      */
     public int getWarehouseInputProductQuantityByTime(String beginDateStr,String endDateStr){
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try{
-            Date beginTime =dateFormat.parse(beginDateStr);
-            Date endTime=dateFormat.parse(endDateStr);
-            //System.out.println("时间比较："+beginTime.compareTo(endTime));
-            if(beginTime.compareTo(endTime)>0){
-
-                return 0;
-            }else{
-                System.out.println("开始时间："+beginTime.toString()+",结束时间:"+endTime.toString());
-                Integer quantity= warehouseInputSheetDao.getWarehouseInputProductQuantityByTime(beginTime,endTime);
-                if(quantity==null){
-                    return 0;
-                }
-                return quantity;
-
-            }
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
+        // TODO
+        /**
+         * 1.注意日期的格式转换和转换异常
+         * 2.考虑开始时间大于结束时间的情况、查询结果为空的情况
+         * 3.Dao层和service层接口已实现，方法对应的Mapper为WarehouseInputSheetMapper
+         */
         return 0;
     }
 
     /**
      * 库存查看：一个时间段内的出库数量合计
-     * @param beginDateStr
-     * @param endDateStr
+     * @param beginDateStr 开始时间字符串 格式为："yyyy-MM-dd HH:mm:ss"
+     * @param endDateStr 结束时间字符串 格式为："yyyy-MM-dd HH:mm:ss"
      * @return
      */
     public int getWarehouseOutProductQuantityByTime(String beginDateStr,String endDateStr){
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try{
-            Date beginTime =dateFormat.parse(beginDateStr);
-            Date endTime=dateFormat.parse(endDateStr);
-            if(beginTime.compareTo(endTime)>0){
-                return 0;
-            }else{
-                Integer quantity= warehouseOutputSheetDao.getWarehouseOutputProductQuantityByTime(beginTime,endTime);
-                if(quantity==null){
-                    return 0;
-                }
-                return quantity;
-            }
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
+        // TODO
+        /**
+         * 1.注意日期的格式转换和转换异常
+         * 2.考虑开始时间大于结束时间的情况、查询结果为空的情况
+         * 3.Dao层和service层接口已提供，需要先补充WarehouseInputSheetMapper中的sql语句
+         */
+
         return 0;
     }
 

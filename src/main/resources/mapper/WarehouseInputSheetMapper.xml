@@ -40,26 +40,33 @@
         select * from warehouse_input_sheet_content where wi_id = #{warehouseInputSheetId} ;
     </select>
 
-<!--库存查看：查询指定时间段内出/入库数量/金额/商品信息/分类信息-->
+
+
+
+<!--待补充语句：库存查看：查询指定时间段内出/入库数量/金额/商品信息/分类信息-->
+<!--
+注意：
+1.结果集与WarehouseIODetailPO对应，格式为：type(有"warehouse_input"和"warehouse_output"两个值),sheet_id,product_name,category_name,quantity,unit_price,total_price,create_time
+2.出入库单状态必须为"审批完成",才算是完成一次出库或者入库操作
+-->
     <select id="getWarehouseIODetailByTime" resultType="com.nju.edu.erp.model.po.WarehouseIODetailPO">
-        (select "warehouse_input"as type, p.id as sheet_id,pr.name as product_name, c.name as category_name,pc.quantity as quantity,pc.unit_price as unit_price,pc.total_price as total_price,p.create_time as create_time from
-        purchase_sheet p,purchase_sheet_content pc,product pr,category c
-        where p.state='审批完成' and p.id=pc.purchase_sheet_id and pc.pid=pr.id and pr.category_id=c.id and p.create_time>=
-        #{beginTime} and p.create_time &lt;= #{endTime})
-        union all
-        (select "warehouse_output" as type,s.id as sheet_id,pr.name as product_name, c.name as category_name,sc.quantity as quantity,sc.unit_price as unit_price,sc.total_price as total_price, s.create_time as create_time from
-        sale_sheet s,sale_sheet_content sc,product pr,category c
-        where s.state='审批完成' and s.id=sc.sale_sheet_id and sc.pid=pr.id and pr.category_id=c.id and s.create_time>=#{beginTime} and
-        s.create_time &lt;=#{endTime})
-        order by create_time;
+
     </select>
 
-<!--库存查看:一个时间段内的入库数量合计-->
+
+
+
+
+<!--待补充语句：库存查看:一个时间段内的入库数量合计-->
+<!--
+注意：
+2.入库单状态必须为"审批完成",才算是完成一次入库操作
+-->
     <select id="getWarehouseInputProductQuantityByTime" resultType="java.lang.Integer">
-        select sum(pc.quantity)
-        from purchase_sheet p,purchase_sheet_content pc
-        where p.state='审批完成' and p.id=pc.purchase_sheet_id and p.create_time>=#{beginTime} and p.create_time &lt;= #{endTime};
+
     </select>
+
+
 
     <resultMap id="WarehouseInputSheetPO" type="com.nju.edu.erp.model.po.WarehouseInputSheetPO">
         <id column="id" property="id"></id>

@@ -6,10 +6,12 @@ import com.nju.edu.erp.model.po.*;
 import com.nju.edu.erp.model.po.WarehouseIODetailPO;
 import com.nju.edu.erp.model.vo.UserVO;
 import com.nju.edu.erp.model.vo.warehouse.*;
+import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.List;
 
+@Service
 public interface WarehouseService {
     /**
      * 商品入库

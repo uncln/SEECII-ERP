@@ -27,11 +27,15 @@
     </update>
 
 
-    <!--库存查看:一个时间段内的出库数量合计-->
-    <select id="getWarehouseOutputProductQuantityByTime" resultType="int">
-        select sum(sc.quantity)
-        from sale_sheet s,sale_sheet_content sc
-        where s.state='审批完成' and s.id=sc.sale_sheet_id and s.create_time>=#{beginTime} and s.create_time &lt;= #{endTime};
+
+
+    <!--待补充语句：库存查看:一个时间段内的出库数量合计-->
+    <!--
+    注意：
+    2.出库单状态必须为"审批完成",才算是完成一次出库操作
+    -->
+    <select id="getWarehouseOutputProductQuantityByTime" resultType="java.lang.Integer">
+
     </select>
 
 

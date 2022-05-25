@@ -32,6 +32,8 @@ import static org.junit.Assert.*;
 public class SaleServiceTest { // 该测试为集成测试，需要用到数据库，请大家连给定的测试数据库进行测试
 
     @Autowired
+    WarehouseService warehouseService;
+    @Autowired
     SaleService saleService;
 
     @Autowired
@@ -45,6 +47,17 @@ public class SaleServiceTest { // 该测试为集成测试，需要用到数据�
 
     @Autowired
     WarehouseOutputSheetDao warehouseOutputSheetDao;
+
+
+
+    @Test
+    public void warehouseServiceTest(){
+        if(warehouseService==null){
+            System.out.println("service也是空的");
+        }else{
+            System.out.println("service不是空的");
+        }
+    }
 
     @Test
     @Transactional
